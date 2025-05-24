@@ -85,10 +85,7 @@ export default function RootLayout({ children }) {
         <meta name="apple-mobile-web-app-title" content="New Studio" />
         <link rel="manifest" href="/favicon/site.webmanifest" />
       </head>
-      <body
-        className="bg-white text-black dark:bg-black dark:text-white"
-        suppressHydrationWarning
-      >
+      <body className="bg-neutral-50 text-neutral-950" suppressHydrationWarning>
         {children}
         <RealViewport />
         <ResetGSAP />

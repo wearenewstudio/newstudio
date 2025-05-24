@@ -1,1 +1,5 @@
 export { default as Lenis } from './lenis'
+export { default as Icon } from './icon'
+export { default as Nav } from './nav'
+export { default as CustomButton } from './button'
+export { default as UnicornScene } from './unicorn'

@@ -8,6 +8,7 @@
 @theme {
   --color-black: oklch(0.1543 0 0);
   --color-white: oklch(0.9761 0 0);
+  --color-blue: oklch(0.4345 0.2878 265.34);
   /* --full-height: calc(var(--dvh) * 100); */
 }
 
@@ -52,9 +53,9 @@
   overscroll-behavior: none;
 }
 
-body::selection {
-  color: var(--color-purple);
-  background: var(--color-light-purple);
+:root::selection {
+  color: var(--color-white);
+  background: var(--color-blue);
 }
 
 html {
