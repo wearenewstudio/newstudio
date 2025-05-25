@@ -12,13 +12,15 @@ export default function CustomButton({
   onClick,
   children,
   className,
+  move = false,
   ...props
 }) {
   const classes = twMerge(
-    'relative flex w-fit transform items-center justify-center gap-3 px-4 py-3 text-base leading-none hover:cursor-pointer',
+    'relative flex w-fit transform items-center justify-center gap-3 px-4 py-2 text-base leading-none transition-all duration-200 ease-in-out hover:cursor-pointer',
     primary && `bg-neutral-200 hover:bg-neutral-300 hover:text-neutral-950`,
     secondary && `hover:bg-neutral-300 hover:text-neutral-950`,
     disabled && 'pointer-events-none opacity-50',
+    move && 'hover:translate-y-1',
     className,
   )
 

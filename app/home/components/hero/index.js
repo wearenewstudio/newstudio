@@ -1,14 +1,16 @@
 import { UnicornScene } from 'components'
 import { Container, DisplayTextClass } from 'styles'
 
-export default function Hero() {
+export default function Hero({ data }) {
   return (
     <section className="relative h-screen w-screen text-white">
       <Container className="relative flex h-full w-full items-center">
         <h1 className={DisplayTextClass()}>
-          Transforming Brands
-          <br />
-          Building Futures
+          {data.split('\n').map((line, index) => (
+            <span key={index} className="block">
+              {line}
+            </span>
+          ))}
         </h1>
 
         <div className="absolute bottom-0 left-0 flex w-full items-center justify-between px-5 py-4">

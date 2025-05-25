@@ -1,11 +1,36 @@
-import { About, Hero, Reel } from './components'
+import { fetchAPI } from 'lib/api'
+import { About, Hero, Reel, Work } from './components'
 
-export default function Home() {
+export default async function Home() {
+  const data = await fetchAPI('/homepage', {
+    populate: {
+      fields: ['hero_title'],
+      work: {
+        fields: ['text'],
+        populate: {
+          selected: {
+            fields: ['title', 'subtitle', 'slug'],
+            populate: {
+              thumbnail: {
+                populate: '*',
+              },
+            },
+          },
+        },
+      },
+      reel: {
+        populate: '*',
+      },
+    },
+  })
+  const doc = data?.data?.attributes
+
   return (
     <>
-      <Hero />
+      <Hero data={doc?.hero_title} />
       <About />
       <Reel />
+      <Work data={doc?.work?.selected?.data} />
     </>
   )
 }
