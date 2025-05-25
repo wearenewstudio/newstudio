@@ -4,7 +4,7 @@ export default function Grid(props) {
   return (
     <div
       className={twMerge(
-        'w-full h-full grid grid-cols-12 gap-5',
+        'grid h-full w-full grid-cols-12 gap-5',
         props?.className,
       )}
     >

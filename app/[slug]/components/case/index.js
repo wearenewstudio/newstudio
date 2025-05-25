@@ -3,6 +3,14 @@
 import { BaseTextClass, Container, Grid, RenderMedia } from 'styles'
 import { Fragment } from 'react'
 
+/**
+ * Fully‑finished, Safari‑safe + key‑collision‑free Case component
+ * --------------------------------------------------------------
+ *  • Valid HTML (no nested <p>)
+ *  • Globally unique React keys for every list item
+ *  • Covers ALL Strapi slice variants in the design system
+ */
+
 function InnerCol(props) {
   return (
     <div className="grid gap-5 [grid-template-rows:_min-content]" {...props} />
@@ -13,294 +21,253 @@ export default function Case({ data }) {
   return (
     <section className="relative">
       <Container>
-        <div className="flex flex-col gap-20">
+        <div className="flex flex-col gap-10">
           {data?.map((item, index) => {
+            const baseKey = `${item.__component}-${item?.id ?? index}`
+
+            /* ---------- project.single-image ---------- */
             if (item.__component === 'project.single-image') {
-              const { layout, reverse, media: mediaWrapper } = item
-              const media = mediaWrapper?.media?.data?.attributes
-              const text = mediaWrapper?.text
-
-              const mediaMatch = layout.match(/\[(\d+)\]/)
-              const mediaSpan = mediaMatch ? parseInt(mediaMatch[1], 10) : 12
-
-              const textColumnStyle =
-                mediaSpan >= 10
+              const { layout, reverse, media: wrap } = item
+              const media = wrap?.media?.data?.attributes
+              const text = wrap?.text ?? ''
+              const span = +/(\d+)/.exec(layout)?.[1] || 12
+              const textStyle =
+                span >= 10 || reverse
                   ? { gridColumn: '1 / 3' }
-                  : reverse
-                    ? { gridColumn: '1 / 3' }
-                    : { gridColumn: '11 / 13' }
-
-              // For the media area we use the remaining space.
-              // For non-reversed: media takes columns 1 to (12 - 2)
-              // For reversed: media takes columns 3 to 12.
-              const mediaColumnStyle = reverse
-                ? { gridColumn: `${12 - mediaSpan + 1} / 13` }
-                : { gridColumn: `1 / ${mediaSpan + 1}` }
+                  : { gridColumn: '11 / 13' }
+              const mediaStyle = reverse
+                ? { gridColumn: `${13 - span} / 13` }
+                : { gridColumn: `1 / ${span + 1}` }
 
               return (
-                <Grid key={index}>
-                  {reverse ? (
-                    <>
-                      {text && (
-                        <p className={BaseTextClass()} style={textColumnStyle}>
-                          {text}
-                        </p>
-                      )}
-
-                      <RenderMedia data={media} style={mediaColumnStyle} />
-                    </>
-                  ) : (
-                    <>
-                      <RenderMedia data={media} style={mediaColumnStyle} />
-
-                      {text && (
-                        <p className={BaseTextClass()} style={textColumnStyle}>
-                          {text}
-                        </p>
-                      )}
-                    </>
+                <Grid key={baseKey}>
+                  {reverse && text && (
+                    <p className={BaseTextClass()} style={textStyle}>
+                      <span>{text}</span>
+                    </p>
+                  )}
+                  <RenderMedia
+                    className={'h-fit'}
+                    data={media}
+                    style={mediaStyle}
+                  />
+                  {!reverse && text && (
+                    <p className={BaseTextClass()} style={textStyle}>
+                      <span>{text}</span>
+                    </p>
                   )}
                 </Grid>
               )
             }
+
+            /* ---------- project.double-media ---------- */
             if (item.__component === 'project.double-media') {
-              const { layout, reverse, media: mediaWrapper } = item
-              const leftMedia = mediaWrapper[0]?.media?.data?.attributes
-              const rightMedia = mediaWrapper[1]?.media?.data?.attributes
-              const leftText = mediaWrapper[0]?.text
-              const rightText = mediaWrapper[1]?.text
+              const { layout, reverse, media: wrap } = item
+              const [l, r] = wrap
+              const match = layout.match(/\[(\d+)\]\s*(?:\|\s*)?\[(\d+)\]/)
+              let [lSpan, rSpan] = match ? [+match[1], +match[2]] : [12, 12]
+              if (reverse) [lSpan, rSpan] = [rSpan, lSpan]
 
-              // Use a regex that captures two numbers in square brackets separated by either a space or a pipe
-              const layoutMatch = layout.match(
-                /\[(\d+)\]\s*(?:\|\s*)?\[(\d+)\]/,
-              )
-              let leftColumnSpan = layoutMatch
-                ? parseInt(layoutMatch[1], 10)
-                : 12
-              let rightColumnSpan = layoutMatch
-                ? parseInt(layoutMatch[2], 10)
-                : 12
-
-              // If reverse flag is true, swap the span variables
-              if (reverse) {
-                ;[leftColumnSpan, rightColumnSpan] = [
-                  rightColumnSpan,
-                  leftColumnSpan,
-                ]
+              const side = (slot, span, start, tag) => {
+                const m = slot?.media?.data?.attributes
+                const t = slot?.text
+                return (
+                  <InnerCol
+                    key={`${baseKey}-${tag}`}
+                    style={{
+                      gridColumn: `${start} / ${start + span}`,
+                      gridTemplateColumns: `repeat(${span},1fr)`,
+                    }}
+                  >
+                    {m && (
+                      <RenderMedia
+                        key={`${baseKey}-${tag}-m`}
+                        data={m}
+                        style={{ gridColumn: '1 / -1' }}
+                        className={'h-fit'}
+                      />
+                    )}
+                    {t && (
+                      <p
+                        key={`${baseKey}-${tag}-t`}
+                        className={BaseTextClass()}
+                        style={{ gridColumn: '1 / 3' }}
+                      >
+                        <span>{t}</span>
+                      </p>
+                    )}
+                  </InnerCol>
+                )
               }
 
               return (
-                <Grid key={index}>
-                  <InnerCol
-                    style={{
-                      gridColumn: `1 / ${leftColumnSpan + 1}`,
-                      gridTemplateColumns: `repeat(${leftColumnSpan}, 1fr)`,
-                    }}
-                  >
-                    <RenderMedia
-                      data={leftMedia}
-                      className="image-wrapper"
-                      style={{ gridColumn: `1 / -1` }}
-                    />
-                    {leftText && (
-                      <p
-                        className={BaseTextClass()}
-                        style={{ gridColumn: `1 / 3` }}
-                      >
-                        {leftText}
-                      </p>
-                    )}
-                  </InnerCol>
-
-                  <InnerCol
-                    style={{
-                      gridTemplateColumns: `repeat(${rightColumnSpan}, 1fr)`,
-                      gridColumn: `${12 - rightColumnSpan + 1} / 13`,
-                    }}
-                  >
-                    <RenderMedia
-                      data={rightMedia}
-                      className="image-wrapper"
-                      style={{ gridColumn: `1 / -1` }}
-                    />
-
-                    {rightText && (
-                      <p
-                        className={BaseTextClass()}
-                        style={{ gridColumn: `1 / 3` }}
-                      >
-                        <p>{rightText}</p>
-                      </p>
-                    )}
-                  </InnerCol>
+                <Grid key={baseKey}>
+                  {side(l, lSpan, 1, 'left')}
+                  {side(r, rSpan, 13 - rSpan, 'right')}
                 </Grid>
               )
             }
+
+            /* ---------- project.4-4-4 ---------- */
             if (item.__component === 'project.4-4-4') {
-              const allColumns = item?.media
-
               return (
-                <Grid key={index}>
-                  {allColumns.map((column, colIndex) => {
-                    const media = column?.media?.data?.attributes
-
+                <Grid key={baseKey}>
+                  {item.media.map((c, i) => {
+                    const start = i * 4 + 1
+                    const m = c?.media?.data?.attributes
+                    const t = c?.text
                     return (
-                      <RenderMedia
-                        key={colIndex}
-                        data={media}
-                        style={{ gridColumn: `${colIndex * 4 + 1} / span 4` }}
-                      />
+                      <Fragment key={`${baseKey}-${i}`}>
+                        {' '}
+                        {/* unique */}
+                        {m && (
+                          <RenderMedia
+                            data={m}
+                            style={{ gridColumn: `${start} / span 4` }}
+                            className={'h-fit'}
+                          />
+                        )}
+                        {t && (
+                          <p
+                            className={BaseTextClass()}
+                            style={{ gridColumn: `${start} / span 4` }}
+                          >
+                            <span>{t}</span>
+                          </p>
+                        )}
+                      </Fragment>
                     )
-                  })}
-                  {allColumns.map((column, colIndex) => {
-                    const text = column?.text
-
-                    if (text)
-                      return (
-                        <p
-                          className={BaseTextClass()}
-                          key={colIndex}
-                          style={{ gridColumn: `${colIndex * 4 + 1} / span 4` }}
-                        >
-                          {text}
-                        </p>
-                      )
-
-                    return null
                   })}
                 </Grid>
               )
             }
+
+            /* ---------- project.12-4-4-4 ---------- */
             if (item.__component === 'project.12-4-4-4') {
-              const bottomColumns = item?.bottom
-              const topColMedia = item?.top?.media?.data?.attributes
-              const topColText = item?.top?.text
-
+              const { top = {}, bottom = [] } = item
               return (
-                <Grid key={index}>
-                  <RenderMedia
-                    data={topColMedia}
-                    style={{ gridColumn: `1 / -1` }}
-                  />
-                  {topColText && (
+                <Grid key={baseKey}>
+                  {top.media?.data?.attributes && (
+                    <RenderMedia
+                      key={`${baseKey}-top-m`}
+                      data={top.media.data.attributes}
+                      style={{ gridColumn: '1 / -1' }}
+                      className={'h-fit'}
+                    />
+                  )}
+                  {top.text && (
                     <p
+                      key={`${baseKey}-top-t`}
                       className={BaseTextClass()}
-                      style={{ gridColumn: `1 / 3` }}
+                      style={{ gridColumn: '1 / 3' }}
                     >
-                      {topColText}
+                      <span>{top.text}</span>
                     </p>
                   )}
-                  {bottomColumns.map((column, colIndex) => {
-                    const media = column?.media?.data?.attributes
-
-                    return (
-                      <RenderMedia
-                        key={colIndex}
-                        data={media}
-                        style={{ gridColumn: `${colIndex * 4 + 1} / span 4` }}
-                      />
-                    )
-                  })}
-                  {bottomColumns.map((column, colIndex) => {
-                    const text = column?.text
-
-                    if (text)
-                      return (
+                  {bottom.map((b, i) => (
+                    <Fragment key={`${baseKey}-b-${i}`}>
+                      {' '}
+                      {/* unique */}
+                      {b.media?.data?.attributes && (
+                        <RenderMedia
+                          data={b.media.data.attributes}
+                          style={{ gridColumn: `${i * 4 + 1} / span 4` }}
+                          className={'h-fit'}
+                        />
+                      )}
+                      {b.text && (
                         <p
                           className={BaseTextClass()}
-                          key={colIndex}
-                          style={{ gridColumn: `${colIndex * 4 + 1} / span 2` }}
+                          style={{ gridColumn: `${i * 4 + 1} / span 2` }}
                         >
-                          {text}
+                          <span>{b.text}</span>
                         </p>
-                      )
-
-                    return null
-                  })}
+                      )}
+                    </Fragment>
+                  ))}
                 </Grid>
               )
             }
+
+            /* ---------- project.12-6-6 ---------- */
             if (item.__component === 'project.12-6-6') {
-              const topMedia = item?.top?.media?.data?.attributes
-              const topText = item?.top?.text
-              const bottomColumns = item?.bottom
-
+              const { top = {}, bottom = [] } = item
               return (
-                <Grid key={index}>
-                  <RenderMedia
-                    data={topMedia}
-                    style={{ gridColumn: `1 / -1` }}
-                  />
-                  {topText && (
+                <Grid key={baseKey}>
+                  {top.media?.data?.attributes && (
+                    <RenderMedia
+                      key={`${baseKey}-top-m`}
+                      data={top.media.data.attributes}
+                      style={{ gridColumn: '1 / -1' }}
+                      className={'h-fit'}
+                    />
+                  )}
+                  {top.text && (
                     <p
+                      key={`${baseKey}-top-t`}
                       className={BaseTextClass()}
-                      style={{ gridColumn: `1 / 3` }}
+                      style={{ gridColumn: '1 / 3' }}
                     >
-                      {topText}
+                      <span>{top.text}</span>
                     </p>
                   )}
-                  {bottomColumns.map((column, colIndex) => {
-                    const media = column?.media?.data?.attributes
-
-                    return (
-                      <RenderMedia
-                        key={colIndex}
-                        data={media}
-                        style={{ gridColumn: `${colIndex * 6 + 1} / span 6` }}
-                      />
-                    )
-                  })}
-                  {bottomColumns.map((column, colIndex) => {
-                    const text = column?.text
-
-                    if (text)
-                      return (
+                  {bottom.map((b, i) => (
+                    <Fragment key={`${baseKey}-b-${i}`}>
+                      {' '}
+                      {/* unique */}
+                      {b.media?.data?.attributes && (
+                        <RenderMedia
+                          data={b.media.data.attributes}
+                          style={{ gridColumn: `${i * 6 + 1} / span 6` }}
+                          className={'h-fit'}
+                        />
+                      )}
+                      {b.text && (
                         <p
                           className={BaseTextClass()}
-                          key={colIndex}
-                          style={{ gridColumn: `${colIndex * 6 + 1} / span 6` }}
+                          style={{ gridColumn: `${i * 6 + 1} / span 6` }}
                         >
-                          {text}
+                          <span>{b.text}</span>
                         </p>
-                      )
-
-                    return null
-                  })}
+                      )}
+                    </Fragment>
+                  ))}
                 </Grid>
               )
             }
+
+            /* ---------- project.6-6-6-6 ---------- */
             if (item.__component === 'project.6-6-6-6') {
-              const allColumns = item?.media
-
               return (
-                <Grid key={index}>
-                  {allColumns.map((column, colIndex) => {
-                    const media = column?.media?.data?.attributes
-                    const text = column?.text
-
-                    const columnStart = (colIndex % 2) * 6 + 1
-                    const pairIndex = Math.floor(colIndex / 2)
-
+                <Grid key={baseKey}>
+                  {item.media.map((c, i) => {
+                    const start = (i % 2) * 6 + 1
+                    const row = Math.floor(i / 2) * 2 + 1
+                    const m = c?.media?.data?.attributes
+                    const t = c?.text
                     return (
-                      <Fragment key={colIndex}>
-                        {media && (
+                      <Fragment key={`${baseKey}-${i}`}>
+                        {' '}
+                        {/* unique */}
+                        {m && (
                           <RenderMedia
-                            data={media}
+                            data={m}
                             style={{
-                              gridColumn: `${columnStart} / span 6`,
-                              gridRow: `${pairIndex * 2 + 1}`,
+                              gridColumn: `${start} / span 6`,
+                              gridRow: row,
                             }}
+                            className={'h-fit'}
                           />
                         )}
-                        {text && (
+                        {t && (
                           <p
                             className={BaseTextClass()}
                             style={{
-                              gridColumn: `${columnStart} / span 6`,
-                              gridRow: `${pairIndex * 2 + 2}`,
+                              gridColumn: `${start} / span 6`,
+                              gridRow: row + 1,
                             }}
                           >
-                            {text}
+                            <span>{t}</span>
                           </p>
                         )}
                       </Fragment>
@@ -309,38 +276,39 @@ export default function Case({ data }) {
                 </Grid>
               )
             }
+
+            /* ---------- project.4-4-4-4-4-4 ---------- */
             if (item.__component === 'project.4-4-4-4-4-4') {
-              const allColumns = item?.media
-
               return (
-                <Grid key={index}>
-                  {allColumns.map((column, colIndex) => {
-                    const media = column?.media?.data?.attributes
-                    const text = column?.text
-
-                    const columnStart = (colIndex % 3) * 4 + 1
-                    const pairIndex = Math.floor(colIndex / 3)
-
+                <Grid key={baseKey}>
+                  {item.media.map((c, i) => {
+                    const start = (i % 3) * 4 + 1
+                    const row = Math.floor(i / 3) * 2 + 1
+                    const m = c?.media?.data?.attributes
+                    const t = c?.text
                     return (
-                      <Fragment key={colIndex}>
-                        {media && (
+                      <Fragment key={`${baseKey}-${i}`}>
+                        {' '}
+                        {/* unique */}
+                        {m && (
                           <RenderMedia
-                            data={media}
+                            data={m}
                             style={{
-                              gridColumn: `${columnStart} / span 4`,
-                              gridRow: `${pairIndex * 2 + 1}`,
+                              gridColumn: `${start} / span 4`,
+                              gridRow: row,
                             }}
+                            className={'h-fit'}
                           />
                         )}
-                        {text && (
+                        {t && (
                           <p
                             className={BaseTextClass()}
                             style={{
-                              gridColumn: `${columnStart} / span 4`,
-                              gridRow: `${pairIndex * 2 + 2}`,
+                              gridColumn: `${start} / span 4`,
+                              gridRow: row + 1,
                             }}
                           >
-                            {text}
+                            <span>{t}</span>
                           </p>
                         )}
                       </Fragment>
@@ -349,6 +317,9 @@ export default function Case({ data }) {
                 </Grid>
               )
             }
+
+            /* Fallback */
+            return null
           })}
         </div>
       </Container>
