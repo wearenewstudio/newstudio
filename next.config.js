@@ -16,36 +16,6 @@ const nextConfig = {
       },
     ],
   },
-  headers: async () => {
-    return [
-      {
-        source: '/(.*)',
-        headers: [
-          {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff',
-          },
-          {
-            key: 'X-Frame-Options',
-            value: 'SAMEORIGIN',
-          },
-          {
-            key: 'X-XSS-Protection',
-            value: '1; mode=block',
-          },
-        ],
-      },
-      {
-        source: '/_next/static/css/(.*)',
-        headers: [
-          {
-            key: 'Content-Type',
-            value: 'text/css',
-          },
-        ],
-      },
-    ]
-  },
   redirects: async () => {
     return [
       {
@@ -57,9 +27,4 @@ const nextConfig = {
   },
 }
 
-module.exports = () => {
-  const plugins = []
-  return plugins.reduce((acc, plugin) => plugin(acc), {
-    ...nextConfig,
-  })
-}
+module.exports = nextConfig
