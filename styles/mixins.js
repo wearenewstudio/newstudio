@@ -24,6 +24,8 @@ export function RenderMedia({
           fill={fill ? true : data?.width || data?.height ? false : true}
           sizes={sizes}
           className={'h-full w-full object-cover'}
+          placeholder={data?.placeholder ? 'blur' : 'empty'}
+          blurDataURL={data?.placeholder && data?.placeholder}
           {...(!fill && { width: data?.width, height: data?.height })}
         />
       </div>
