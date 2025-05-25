@@ -1,6 +1,5 @@
 import { RealViewport, ResetGSAP } from 'lib'
 import { NewStudioSans } from 'styles'
-import { Lenis } from 'components'
 
 import '/styles/globals.css'
 
@@ -89,7 +88,6 @@ export default function RootLayout({ children }) {
         {children}
         <RealViewport />
         <ResetGSAP />
-        <Lenis root />
       </body>
     </html>
   )

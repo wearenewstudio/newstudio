@@ -6,5 +6,6 @@ export {
   HugeTextClass,
   BigTextClass,
   SmallTextClass,
+  BaseTextClass,
 } from './text'
 export { RenderMedia } from './mixins'

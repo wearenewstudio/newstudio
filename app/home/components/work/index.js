@@ -36,7 +36,7 @@ export default function Work({ data }) {
             return (
               <Link
                 className={`flex h-fit w-full flex-col ${colClasses}`}
-                href="/"
+                href={`/${_?.attributes?.slug}`}
                 key={index}
               >
                 <RenderMedia

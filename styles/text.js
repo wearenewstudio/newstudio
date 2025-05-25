@@ -12,3 +12,6 @@ export function BigTextClass(className) {
 export function SmallTextClass(className) {
   return twMerge('text-xl leading-none', className)
 }
+export function BaseTextClass(className) {
+  return twMerge('text-base leading-5', className)
+}

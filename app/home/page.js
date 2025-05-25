@@ -1,4 +1,4 @@
-import { fetchAPI } from 'lib/api'
+import { fetchAPI } from 'lib'
 import { About, Hero, Reel, Work } from './components'
 
 export default async function Home() {
