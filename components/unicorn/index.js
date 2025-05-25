@@ -112,7 +112,7 @@ export default function UnicornScene({
     <div
       ref={elementRef}
       style={style}
-      className={`relative ${className}`}
+      className={className}
       role="img"
       aria-label={ariaLabel}
       data-us-dpi={dpi}
