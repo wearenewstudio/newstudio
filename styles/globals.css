@@ -9,12 +9,27 @@
   --color-black: oklch(0.1543 0 0);
   --color-white: oklch(0.9761 0 0);
   --color-blue: oklch(0.4345 0.2878 265.34);
+  --vw-unit: calc(100vw / 1536);
   /* --full-height: calc(var(--dvh) * 100); */
+
+  --margin-desktop: calc(var(--vw-unit) * 20);
+
+  --display-desktop: calc(var(--vw-unit) * 96);
+
+  --huge-desktop: calc(var(--vw-unit) * 48);
+
+  --big-desktop: calc(var(--vw-unit) * 30);
+
+  --small-desktop: calc(var(--vw-unit) * 20);
+
+  --base-desktop: calc(var(--vw-unit) * 16);
+  --base-leading-desktop: calc(var(--vw-unit) * 20);
 }
 
 @theme inline {
   --font-new-studio-sans: var(--font-new-studio-sans);
 }
+@custom-variant dark (&:where(.dark, .dark *));
 @layer utilities {
   @keyframes marquee {
     0% {

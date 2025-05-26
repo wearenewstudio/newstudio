@@ -17,7 +17,10 @@ export default function CustomButton({
 }) {
   const classes = twMerge(
     'relative flex w-fit transform items-center justify-center gap-3 px-4 py-2 text-base leading-none backdrop-blur-sm transition-all duration-200 ease-in-out hover:cursor-pointer',
-    primary && `bg-neutral-200/80 hover:bg-neutral-100 hover:text-neutral-950`,
+    '2xl:gap-[calc((12/1536)*100vw)] 2xl:px-[calc((16/1536)*100vw)] 2xl:py-[calc((8/1536)*100vw)]',
+    '2xl:text-(length:--base-desktop) 2xl:leading-(--base-leading-desktop) text-base leading-5',
+    primary &&
+      `bg-neutral-200/80 hover:bg-neutral-100 hover:text-neutral-950 dark:bg-neutral-800/80 dark:hover:bg-neutral-900 dark:hover:text-neutral-50`,
     secondary && `hover:bg-neutral-300 hover:text-neutral-950`,
     disabled && 'pointer-events-none opacity-50',
     move && 'hover:translate-y-1',

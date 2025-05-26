@@ -13,7 +13,10 @@ import { Fragment } from 'react'
 
 function InnerCol(props) {
   return (
-    <div className="grid gap-5 [grid-template-rows:_min-content]" {...props} />
+    <div
+      className="2xl:gap-[var(--vw-unit) * 20] grid gap-5 [grid-template-rows:_min-content]"
+      {...props}
+    />
   )
 }
 
@@ -21,7 +24,7 @@ export default function Case({ data }) {
   return (
     <section className="relative">
       <Container>
-        <div className="flex flex-col gap-10">
+        <div className="2xl:gap-[var(--vw-unit) * 40] flex flex-col gap-10">
           {data?.map((item, index) => {
             const baseKey = `${item.__component}-${item?.id ?? index}`
 

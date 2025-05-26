@@ -57,7 +57,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html
-      className={NewStudioSans.className}
+      className={`${NewStudioSans.className}`}
       lang="en-US"
       dir="ltr"
       suppressHydrationWarning
@@ -84,7 +84,10 @@ export default function RootLayout({ children }) {
         <meta name="apple-mobile-web-app-title" content="New Studio" />
         <link rel="manifest" href="/favicon/site.webmanifest" />
       </head>
-      <body className="bg-neutral-50 text-neutral-950" suppressHydrationWarning>
+      <body
+        className="bg-neutral-50 text-neutral-950 dark:bg-neutral-950 dark:text-neutral-50"
+        suppressHydrationWarning
+      >
         {children}
         <RealViewport />
         <ResetGSAP />

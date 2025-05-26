@@ -1,21 +1,23 @@
 import { UnicornScene } from 'components'
-import { Container, DisplayTextClass } from 'styles'
+import { BaseTextClass, Container, DisplayTextClass } from 'styles'
 
 export default function Hero({ data }) {
   return (
-    <section className="relative h-screen w-screen text-white">
+    <section id="hero" className="relative h-screen w-screen text-white">
       <Container className="relative flex h-full w-full items-center">
-        <h1 className={DisplayTextClass()}>
-          {data.split('\n').map((line, index) => (
-            <span key={index} className="block">
-              {line}
-            </span>
-          ))}
-        </h1>
+        <div className="relative flex h-full w-full flex-col justify-end gap-[5vh]">
+          <h1 className={DisplayTextClass()}>
+            {data.split('\n').map((line, index) => (
+              <span key={index} className="block">
+                {line}
+              </span>
+            ))}
+          </h1>
 
-        <div className="absolute bottom-0 left-0 flex w-full items-center justify-between px-5 py-4">
-          <p className="text-base">Scroll</p>
-          <p className="text-base">2025</p>
+          <div className="2xl:py-[var(--vw-unit) * 20] flex w-full items-center justify-between py-5">
+            <p className={BaseTextClass()}>Scroll</p>
+            <p className={BaseTextClass()}>2025</p>
+          </div>
         </div>
       </Container>
 
