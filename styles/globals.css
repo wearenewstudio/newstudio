@@ -45,7 +45,11 @@
   --base-desktop: calc(var(--vw-unit) * 16);
   --base-leading-desktop: calc(var(--vw-unit) * 16);
 }
-
+@media (hover: none) and (pointer: coarse) {
+  .scrollbar-thumb {
+    display: none !important;
+  }
+}
 @theme inline {
   --font-new-studio-sans: var(--font-new-studio-sans);
 }
@@ -91,6 +95,10 @@
 :root::selection {
   color: var(--color-white);
   background: var(--color-blue);
+}
+
+:root::-webkit-scrollbar {
+  display: none;
 }
 
 html {

@@ -12,7 +12,7 @@ export default function Work({ data }) {
   return (
     <section className="2xl:mt-(--desktop-40) relative mt-40">
       <Container>
-        <div className="pointer-events-none h-[1px] w-full bg-neutral-500" />
+        <div className="pointer-events-none h-[1px] w-full bg-neutral-300 dark:bg-neutral-800" />
         <h2
           className={BigTextClass(
             '2xl:pb-(--desktop-10) 2xl:pt-(--desktop-4) pb-10 pt-4',
