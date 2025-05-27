@@ -116,7 +116,7 @@ export default function CustomLink({
     <Link
       ref={linkRef}
       href={href}
-      onClick={handleClick}
+      // onClick={handleClick}
       style={{
         /* tweak these two numbers to change spacing + icon size */
         '--spacing': '4px',

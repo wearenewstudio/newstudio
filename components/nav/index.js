@@ -55,24 +55,35 @@ export default function Nav() {
     <header
       ref={navEl}
       className={twMerge(
-        '2xl:py-[var(--vw-unit) * 20] fixed left-0 top-0 z-50 w-full py-5 text-neutral-50',
+        '2xl:py-[calc(var(--vw-unit) * 20)] fixed left-0 top-0 z-50 w-full py-5 text-neutral-50',
         scrolledPast ? 'mix-blend-difference' : 'mix-blend-normal',
       )}
     >
       <Container>
         <div className="flex w-full items-center justify-between">
           <Link
-            className="2xl:w-[var(--vw-unit) * 96] w-24 text-neutral-50"
+            className="2xl:w-[calc(var(--vw-unit) * 96)] w-24 text-neutral-50"
             href={'/'}
           >
             <Icon name="logo" />
           </Link>
 
-          <nav className="2xl:gap-[var(--vw-unit) * 32] flex items-center gap-8">
-            <CustomLink href={'/work'}>Work</CustomLink>
-            <CustomLink href={'/about'}>About</CustomLink>
-            <CustomLink href={'/insights'}>Insights</CustomLink>
-            <CustomLink href={'/contact'}>Contact</CustomLink>
+          <nav className="2xl:gap-(calc(var(--vw-unit) * 32)) flex items-center gap-8">
+            <CustomLink $underline={pathname === '/work'} href={'/work'}>
+              Work
+            </CustomLink>
+            <CustomLink $underline={pathname === '/about'} href={'/about'}>
+              About
+            </CustomLink>
+            <CustomLink
+              $underline={pathname === '/insights'}
+              href={'/insights'}
+            >
+              Insights
+            </CustomLink>
+            <CustomLink $underline={pathname === '/contact'} href={'/contact'}>
+              Contact
+            </CustomLink>
             <Toggle />
           </nav>
         </div>
