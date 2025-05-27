@@ -3,8 +3,12 @@
 import { BaseTextClass, Grid, RenderMedia } from 'styles'
 import Link from 'next/link'
 import { Col } from 'app/[slug]/components/about'
+import { useTransitionRouter } from 'next-view-transitions'
+import { slideInOut } from 'components'
 
 export default function IndexSection({ data }) {
+  const router = useTransitionRouter()
+
   const sortedData = (data || []).slice().sort((a, b) => {
     const aYear = parseInt(a.attributes.info.year || '0', 10)
     const bYear = parseInt(b.attributes.info.year || '0', 10)
@@ -17,6 +21,12 @@ export default function IndexSection({ data }) {
         <Link
           className="border-t-1 2xl:py-(--desktop-20) w-full border-t-neutral-300 py-20 no-underline dark:border-t-neutral-800"
           href={item?.attributes?.slug}
+          onClick={(e) => {
+            e.preventDefault()
+            router.push(`/${item?.attributes?.slug}`, {
+              onTransitionReady: slideInOut,
+            })
+          }}
           key={index}
         >
           <Grid className="grid">
