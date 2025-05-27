@@ -1,5 +1,5 @@
 import { fetchAPI } from 'lib'
-import { About, Hero, Reel, Work } from './components'
+import { About, Althero, Hero, Reel, Work } from './components'
 
 export default async function Home() {
   const data = await fetchAPI('/homepage', {
@@ -27,9 +27,9 @@ export default async function Home() {
 
   return (
     <>
-      <Hero data={doc?.hero_title} />
-      <About />
+      <Althero data={doc?.hero_title} />
       <Reel />
+      <About />
       <Work data={doc?.work?.selected?.data} />
     </>
   )

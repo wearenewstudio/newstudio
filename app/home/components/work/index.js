@@ -1,3 +1,7 @@
+'use client'
+
+import { slideInOut } from 'components'
+import { useTransitionRouter } from 'next-view-transitions'
 import Link from 'next/link'
 import {
   BaseTextClass,
@@ -9,8 +13,15 @@ import {
 } from 'styles'
 
 export default function Work({ data }) {
+  const router = useTransitionRouter()
+
+  const handleLinkClick = (e, slug) => {
+    e.preventDefault(e)
+    router.push(`/${slug}`, { onTransitionReady: slideInOut })
+  }
+
   return (
-    <section className="2xl:mt-(--desktop-40) relative mt-40">
+    <section className="relative">
       <Container>
         <div className="pointer-events-none h-[1px] w-full bg-neutral-300 dark:bg-neutral-800" />
         <h2
@@ -44,6 +55,7 @@ export default function Work({ data }) {
               <Link
                 className={`flex h-fit w-full flex-col ${colClasses}`}
                 href={`/${_?.attributes?.slug}`}
+                onClick={(e) => handleLinkClick(e, _?.attributes?.slug)}
                 key={index}
               >
                 <RenderMedia

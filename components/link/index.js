@@ -4,7 +4,8 @@
 import Link from 'next/link'
 import { useRef } from 'react'
 import { twMerge } from 'tailwind-merge'
-import { Icon } from 'components'
+import { Icon, slideInOut } from 'components'
+import { useTransitionRouter } from 'next-view-transitions'
 
 export default function CustomLink({
   href,
@@ -16,6 +17,7 @@ export default function CustomLink({
   ...props
 }) {
   const linkRef = useRef(null)
+  const router = useTransitionRouter()
 
   /*──────────────────────────────────
    * 1 ▸ handle non-link fallback
@@ -34,9 +36,6 @@ export default function CustomLink({
     )
   }
 
-  /*──────────────────────────────────
-   * 2 ▸ external / internal
-   *─────────────────────────────────*/
   const isExternal =
     href.startsWith('http') ||
     href.startsWith('mailto') ||
@@ -50,6 +49,9 @@ export default function CustomLink({
     if (onClick) onClick(e)
     if (!isExternal) {
       e.preventDefault()
+      router.push(href, {
+        onTransitionReady: slideInOut,
+      })
     }
   }
 
@@ -116,7 +118,7 @@ export default function CustomLink({
     <Link
       ref={linkRef}
       href={href}
-      // onClick={handleClick}
+      onClick={handleClick}
       style={{
         /* tweak these two numbers to change spacing + icon size */
         '--spacing': '4px',

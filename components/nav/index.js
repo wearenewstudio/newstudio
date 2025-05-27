@@ -4,23 +4,27 @@ import { useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { twMerge } from 'tailwind-merge'
-import { CustomLink, Icon, Toggle } from 'components'
+import { CustomLink, Icon, slideInOut, Toggle } from 'components'
 import { Container } from 'styles'
+import { useLenis } from 'lenis/react'
 
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/dist/ScrollTrigger'
+import { useTransitionRouter } from 'next-view-transitions'
 
 gsap.registerPlugin(ScrollTrigger)
 
 export default function Nav() {
   const navEl = useRef(null)
   const pathname = usePathname()
+  const router = useTransitionRouter()
+  const lenis = useLenis()
   const [scrolledPast, setScrolledPast] = useState(false)
 
   useGSAP(
     () => {
-      if (pathname === '/') setScrolledPast(false)
+      if (pathname === '/') setScrolledPast(true)
       else setScrolledPast(true)
 
       const heroSection = document.getElementById('hero')
@@ -51,6 +55,18 @@ export default function Nav() {
     { dependencies: [navEl, pathname], scope: navEl },
   )
 
+  useGSAP(
+    () => {
+      gsap.from(navEl.current, {
+        opacity: 0,
+        duration: 0.5,
+        delay: 0.25,
+        ease: 'power3.out',
+      })
+    },
+    { dependencies: [navEl], scope: navEl },
+  )
+
   return (
     <header
       ref={navEl}
@@ -64,6 +80,17 @@ export default function Nav() {
           <Link
             className="2xl:w-(--desktop-24) w-24 text-neutral-50"
             href={'/'}
+            onClick={(e) => {
+              e.preventDefault()
+
+              if (pathname === '/') {
+                lenis.scrollTo(0)
+              } else {
+                router.push('/', {
+                  onTransitionReady: slideInOut,
+                })
+              }
+            }}
           >
             <Icon name="logo" />
           </Link>

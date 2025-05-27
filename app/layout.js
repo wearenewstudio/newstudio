@@ -1,3 +1,4 @@
+import { ViewTransitions } from 'next-view-transitions'
 import { RealViewport, ResetGSAP } from 'lib'
 import { NewStudioSans } from 'styles'
 
@@ -56,42 +57,44 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html
-      className={`${NewStudioSans.className}`}
-      lang="en-US"
-      dir="ltr"
-      suppressHydrationWarning
-    >
-      <head>
-        <meta httpEquiv="x-ua-compatible" content="ie=edge" />
-        <meta name="referrer" content="no-referrer" />
-        <meta name="format-detection" content="telephone=no" />
-        <meta name="geo.region" content="US" />
-
-        <link
-          rel="icon"
-          type="image/png"
-          href="/favicon/favicon-96x96.png"
-          sizes="96x96"
-        />
-        <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
-        <link rel="shortcut icon" href="/favicon/favicon.ico" />
-        <link
-          rel="apple-touch-icon"
-          sizes="180x180"
-          href="/favicon/apple-touch-icon.png"
-        />
-        <meta name="apple-mobile-web-app-title" content="New Studio" />
-        <link rel="manifest" href="/favicon/site.webmanifest" />
-      </head>
-      <body
-        className="bg-neutral-50 text-neutral-950 dark:bg-neutral-950 dark:text-neutral-50"
+    <ViewTransitions>
+      <html
+        className={`${NewStudioSans.className}`}
+        lang="en-US"
+        dir="ltr"
         suppressHydrationWarning
       >
-        {children}
-        <RealViewport />
-        <ResetGSAP />
-      </body>
-    </html>
+        <head>
+          <meta httpEquiv="x-ua-compatible" content="ie=edge" />
+          <meta name="referrer" content="no-referrer" />
+          <meta name="format-detection" content="telephone=no" />
+          <meta name="geo.region" content="US" />
+
+          <link
+            rel="icon"
+            type="image/png"
+            href="/favicon/favicon-96x96.png"
+            sizes="96x96"
+          />
+          <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
+          <link rel="shortcut icon" href="/favicon/favicon.ico" />
+          <link
+            rel="apple-touch-icon"
+            sizes="180x180"
+            href="/favicon/apple-touch-icon.png"
+          />
+          <meta name="apple-mobile-web-app-title" content="New Studio" />
+          <link rel="manifest" href="/favicon/site.webmanifest" />
+        </head>
+        <body
+          className="bg-neutral-50 text-neutral-950 dark:bg-neutral-950 dark:text-neutral-50"
+          suppressHydrationWarning
+        >
+          {children}
+          <RealViewport />
+          <ResetGSAP />
+        </body>
+      </html>
+    </ViewTransitions>
   )
 }
