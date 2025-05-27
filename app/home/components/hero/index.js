@@ -14,7 +14,7 @@ export default function Hero({ data }) {
             ))}
           </h1>
 
-          <div className="2xl:py-[var(--vw-unit) * 20] flex w-full items-center justify-between py-5">
+          <div className="2xl:py-(--desktop-5) flex w-full items-center justify-between py-5">
             <p className={BaseTextClass()}>Scroll</p>
             <p className={BaseTextClass()}>2025</p>
           </div>

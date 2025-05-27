@@ -2,7 +2,7 @@ import { Container, RenderMedia } from 'styles'
 
 export default function Hero({ data }) {
   return (
-    <section className="relative h-full w-full pb-5 pt-20 2xl:pb-[calc(var(--vw-unit)*20)] 2xl:pt-[calc(var(--vw-unit)*80)]">
+    <section className="2xl:pb-(--desktop-5) 2xl:pt-(--desktop-20) relative h-full w-full pb-5 pt-20">
       <Container>
         <RenderMedia
           className={'h-[90svh] portrait:h-[60svw]'}

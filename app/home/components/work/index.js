@@ -10,18 +10,18 @@ import {
 
 export default function Work({ data }) {
   return (
-    <section className="2xl:mt-[var(--vw-unit) * 160] relative mt-40">
+    <section className="2xl:mt-(--desktop-40) relative mt-40">
       <Container>
         <div className="pointer-events-none h-[1px] w-full bg-neutral-500" />
         <h2
           className={BigTextClass(
-            '2xl:pb-[var(--vw-unit) * 40] 2xl:pt-[var(--vw-unit) * 16] pb-10 pt-4',
+            '2xl:pb-(--desktop-10) 2xl:pt-(--desktop-4) pb-10 pt-4',
           )}
         >
           Selected Work
         </h2>
 
-        <Grid className="2xl:gap-y-[var(--vw-unit) * 80] gap-y-20">
+        <Grid className="2xl:gap-y-(--desktop-20) gap-y-20">
           {data?.map((_, index) => {
             let colClasses
             switch (index) {
@@ -62,7 +62,7 @@ export default function Work({ data }) {
                 />
                 <p
                   className={SmallTextClass(
-                    '2xl:mb-[var(--vw-unit) * 4] 2xl:mt-[var(--vw-unit) * 12] mb-1 mt-3',
+                    '2xl:mb-(--desktop-1) 2xl:mt-(--desktop-3) mb-1 mt-3',
                   )}
                 >
                   {_?.attributes?.title}

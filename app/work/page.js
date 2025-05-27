@@ -24,7 +24,7 @@ export default async function Work({ searchParams }) {
             {search.index === undefined ? 'Work' : 'Index'}
           </h1>
 
-          <div className="2xl:gap-[calc(var(--vw-unit) * 16)] 2xl:pb-[calc(var(--vw-unit) * 20)] 2xl:pt-[calc(var(--vw-unit) * 40)] flex gap-4 pt-10 pb-5">
+          <div className="2xl:gap-(--desktop-5) 2xl:pt-(--desktop-10) 2xl:pb-(--desktop-5) flex gap-5 pb-5 pt-10">
             <CustomLink $underline={search.index === undefined} href={'/work'}>
               Work
             </CustomLink>

@@ -20,7 +20,7 @@ export default function Toggle() {
   return (
     <button
       aria-label="Toggle dark mode"
-      className="mt-1 h-2 w-2 cursor-pointer rounded-full border-none bg-neutral-50 2xl:h-[calc((8/1536)*100vw)] 2xl:w-[calc((8/1536)*100vw)] dark:bg-neutral-50"
+      className="2xl:h-(--desktop-2) 2xl:w-(--desktop-2) mt-1 h-2 w-2 cursor-pointer rounded-full border-none bg-neutral-50 dark:bg-neutral-50"
       onClick={() => setIsDark(!isDark)}
     />
   )

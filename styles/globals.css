@@ -6,11 +6,31 @@
 @import 'tailwindcss/utilities.css' layer(utilities);
 
 @theme {
-  --color-black: oklch(0.1543 0 0);
-  --color-white: oklch(0.9761 0 0);
   --color-blue: oklch(0.4345 0.2878 265.34);
+  --full-height: calc(var(--dvh) * 100);
   --vw-unit: calc(100vw / 1536);
-  /* --full-height: calc(var(--dvh) * 100); */
+
+  --desktop-1: calc(var(--vw-unit) * 4);
+  --desktop-2: calc(var(--vw-unit) * 8);
+  --desktop-3: calc(var(--vw-unit) * 12);
+  --desktop-4: calc(var(--vw-unit) * 16);
+  --desktop-5: calc(var(--vw-unit) * 20);
+  --desktop-6: calc(var(--vw-unit) * 24);
+  --desktop-7: calc(var(--vw-unit) * 28);
+  --desktop-8: calc(var(--vw-unit) * 32);
+  --desktop-9: calc(var(--vw-unit) * 36);
+  --desktop-10: calc(var(--vw-unit) * 40);
+  --desktop-11: calc(var(--vw-unit) * 44);
+  --desktop-12: calc(var(--vw-unit) * 48);
+  --desktop-13: calc(var(--vw-unit) * 52);
+  --desktop-14: calc(var(--vw-unit) * 56);
+  --desktop-15: calc(var(--vw-unit) * 60);
+  --desktop-16: calc(var(--vw-unit) * 64);
+  --desktop-17: calc(var(--vw-unit) * 68);
+  --desktop-18: calc(var(--vw-unit) * 72);
+  --desktop-19: calc(var(--vw-unit) * 76);
+  --desktop-20: calc(var(--vw-unit) * 80);
+  --desktop-40: calc(var(--vw-unit) * 160);
 
   --margin-desktop: calc(var(--vw-unit) * 20);
 

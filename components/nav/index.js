@@ -55,20 +55,20 @@ export default function Nav() {
     <header
       ref={navEl}
       className={twMerge(
-        '2xl:py-[calc(var(--vw-unit) * 20)] fixed left-0 top-0 z-50 w-full py-5 text-neutral-50',
+        '2xl:py-(--desktop-5) fixed left-0 top-0 z-50 w-full py-5 text-neutral-50',
         scrolledPast ? 'mix-blend-difference' : 'mix-blend-normal',
       )}
     >
       <Container>
         <div className="flex w-full items-center justify-between">
           <Link
-            className="2xl:w-[calc(var(--vw-unit) * 96)] w-24 text-neutral-50"
+            className="2xl:w-(--desktop-24) w-24 text-neutral-50"
             href={'/'}
           >
             <Icon name="logo" />
           </Link>
 
-          <nav className="2xl:gap-(calc(var(--vw-unit) * 32)) flex items-center gap-8">
+          <nav className="2xl:gap-(--desktop-8) flex items-center gap-8">
             <CustomLink $underline={pathname === '/work'} href={'/work'}>
               Work
             </CustomLink>

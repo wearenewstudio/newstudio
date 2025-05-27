@@ -3,7 +3,7 @@ import { Container, HugeTextClass } from 'styles'
 
 export default function About() {
   return (
-    <section className="2xl:pb-[var(--vw-unit) * 80] 2xl:pt-[var(--vw-unit) * 160] pb-20 pt-40">
+    <section className="2xl:pb-(--desktop-20) 2xl:pt-(--desktop-40) pb-20 pt-40">
       <Container>
         <div className="2xl:max-w-3/5 max-w-4xl">
           <p className={HugeTextClass()}>
@@ -12,7 +12,7 @@ export default function About() {
             change.
           </p>
 
-          <div className="2xl:mt-[var(--vw-unit) * 40] 2xl:gap-[var(--vw-unit) * 12] mt-10 flex gap-3">
+          <div className="2xl:mt-(--desktop-10) 2xl:gap-(--desktop-3) mt-10 flex gap-3">
             <CustomButton primary href={'/about'}>
               See our capabilities
             </CustomButton>
