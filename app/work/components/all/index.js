@@ -1,6 +1,6 @@
 'use client'
 
-import { BaseTextClass, Grid, Normal, RenderMedia } from 'styles'
+import { BaseTextClass, Grid, RenderMedia } from 'styles'
 import Link from 'next/link'
 import { Col } from 'app/[slug]/components/about'
 
