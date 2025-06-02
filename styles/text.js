@@ -25,5 +25,5 @@ export function SmallTextClass(className) {
   )
 }
 export function BaseTextClass(className) {
-  return twMerge('text-base leading-4', className)
+  return twMerge('2xl:text-(length:--base-desktop) 2xl:leading-(--base-leading-desktop) text-base leading-4', className)
 }

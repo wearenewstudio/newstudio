@@ -43,8 +43,8 @@
 
   --small-desktop: calc(var(--vw-unit) * 20);
 
-  --base-desktop: calc(var(--vw-unit) * 16);
-  --base-leading-desktop: calc(var(--vw-unit) * 16);
+  --base-desktop: calc(var(--vw-unit) * 12);
+  --base-leading-desktop: calc(var(--vw-unit) * 12);
 }
 @media (hover: none) and (pointer: coarse) {
   .scrollbar-thumb {
