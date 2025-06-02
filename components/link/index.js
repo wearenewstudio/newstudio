@@ -64,7 +64,7 @@ export default function CustomLink({
   /*──────────────────────────────────
    * 4 ▸ classes
    *─────────────────────────────────*/
-  const fontSize = `2xl:text-(length:--base-desktop) 2xl:leading-(--base-leading-desktop) text-base leading-5`
+  const fontSize = `text-base leading-5`
 
   const root = twMerge(
     'group relative inline-flex items-center whitespace-nowrap ' +

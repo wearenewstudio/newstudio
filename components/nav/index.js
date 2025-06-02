@@ -95,7 +95,7 @@ export default function Nav() {
             <Icon name="logo" />
           </Link>
 
-          <nav className="2xl:gap-(--desktop-8) flex items-center gap-8">
+          <nav className="flex items-center gap-8">
             <CustomLink $underline={pathname === '/work'} href={'/work'}>
               Work
             </CustomLink>
