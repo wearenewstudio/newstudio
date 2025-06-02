@@ -30,6 +30,7 @@
   --desktop-18: calc(var(--vw-unit) * 72);
   --desktop-19: calc(var(--vw-unit) * 76);
   --desktop-20: calc(var(--vw-unit) * 80);
+  --desktop-24: calc(var(--vw-unit) * 96);
   --desktop-40: calc(var(--vw-unit) * 160);
 
   --margin-desktop: calc(var(--vw-unit) * 20);

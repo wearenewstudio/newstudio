@@ -24,7 +24,7 @@ export default function Nav() {
 
   useGSAP(
     () => {
-      if (pathname === '/') setScrolledPast(true)
+      if (pathname === '/about') setScrolledPast(false)
       else setScrolledPast(true)
 
       const heroSection = document.getElementById('hero')
