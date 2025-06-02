@@ -9,6 +9,7 @@ const nextConfig = {
         hostname: process.env.STRAPI_HOSTNAME,
       },
     ],
+    dangerouslyAllowSVG: true,
   },
   headers: async () => {
     return [
