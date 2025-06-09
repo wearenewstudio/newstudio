@@ -10,7 +10,6 @@ const IconArrowNortheast = forwardRef((props, ref) => (
   >
     <g>
       <path
-        id="Vector"
         d="M8 16L16 8M16 8H10M16 8V14"
         stroke="currentColor"
         strokeWidth={2}

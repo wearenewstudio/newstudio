@@ -21,7 +21,7 @@ export default function Work({ data }) {
   }
 
   return (
-    <section className="relative">
+    <section className="2xl:pb-(--desktop-40) relative pb-40">
       <Container>
         <div className="pointer-events-none h-[1px] w-full bg-neutral-300 dark:bg-neutral-800" />
         <h2

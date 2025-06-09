@@ -3,7 +3,7 @@ import { Container, HugeTextClass } from 'styles'
 
 export default function About() {
   return (
-    <section className="2xl:pb-(--desktop-40) 2xl:pt-(--desktop-40) pb-40 pt-40">
+    <section className="2xl:py-(--desktop-40) relative py-40">
       <Container>
         <div className="2xl:max-w-3/5 max-w-4xl">
           <p className={HugeTextClass()}>

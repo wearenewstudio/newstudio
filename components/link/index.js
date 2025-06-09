@@ -20,9 +20,7 @@ export default function CustomLink({
   const linkRef = useRef(null)
   const router = useTransitionRouter()
 
-  /*──────────────────────────────────
-   * 1 ▸ handle non-link fallback
-   *─────────────────────────────────*/
+  /*─────────────── 1 ▸ non-link fallback ───────────────*/
   if (!href || typeof href !== 'string') {
     const Tag = fallback
     return (
@@ -50,26 +48,16 @@ export default function CustomLink({
     if (onClick) onClick(e)
     if (!isExternal) {
       e.preventDefault()
-      router.push(href, {
-        onTransitionReady: slideInOut,
-      })
+      router.push(href, { onTransitionReady: slideInOut })
     }
   }
 
-  /*──────────────────────────────────
-   * 3 ▸ underline logic
-   *─────────────────────────────────*/
+  /*─────────────── 2 ▸ class helpers ───────────────*/
   const withUnderline = $underline || isExternal
 
-  /*──────────────────────────────────
-   * 4 ▸ classes
-   *─────────────────────────────────*/
-  const fontSize = `2xl:text-(length:--base-desktop) 2xl:leading-(--base-leading-desktop) text-base leading-5`
-
   const root = twMerge(
-    'group relative inline-flex items-center whitespace-nowrap ' +
-      'w-fit cursor-pointer select-none',
-    fontSize,
+    'group relative inline-flex w-fit cursor-pointer select-none items-center overflow-hidden',
+    'text-base leading-5 2xl:text-[length:var(--base-desktop)] 2xl:leading-[var(--base-leading-desktop)]',
     className,
   )
 
@@ -77,7 +65,6 @@ export default function CustomLink({
     'absolute left-0 bottom-0 h-px w-full bg-current ' +
     'transition-transform duration-600 ease-[cubic-bezier(0.25,0.1,0.25,1)]'
 
-  /*  line-A  (the one that disappears on hover)  */
   const lineA = twMerge(
     lineBase,
     withUnderline
@@ -85,7 +72,6 @@ export default function CustomLink({
       : 'origin-right scale-x-0',
   )
 
-  /*  line-B  (the one that sweeps in)  */
   const lineB = twMerge(
     lineBase,
     withUnderline
@@ -93,56 +79,64 @@ export default function CustomLink({
       : 'origin-right scale-x-0 group-hover:origin-left group-hover:scale-x-100 group-hover:delay-150',
   )
 
-  /*  icon + content motion (external links only)  */
-  const iconA =
-    'icon-a relative w-[--icon-size] pointer-events-none ' +
-    'transition-transform duration-700 ease-[cubic-bezier(0.25,0.1,0.25,1)] ' +
-    (isExternal
-      ? 'group-hover:translate-x-[125%] group-hover:-translate-y-1/2 group-hover:opacity-0'
-      : '')
+  /*─────────────── 3 ▸ icons & text ───────────────*/
+  const iconBase =
+    'pointer-events-none transition-all duration-700 ' + // ← guarantees transform **and** opacity animate
+    'ease-[cubic-bezier(0.25,0.1,0.25,1)] translate-x-0 translate-y-0 ' +
+    'w-[var(--icon-size)] h-[var(--icon-size)] shrink-0'
 
-  const iconB =
-    'icon-b absolute left-0 top-1/2 w-[--icon-size] -translate-x-[125%] -translate-y-1/2 opacity-0 ' +
-    'pointer-events-none transition-transform duration-700 ease-[cubic-bezier(0.25,0.1,0.25,1)] ' +
-    (isExternal
-      ? 'group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100'
-      : '')
+  /* default arrow – sits at the right of the label */
+  const iconA = twMerge(
+    iconBase,
+    'relative ml-[var(--spacing)]', // centred by flex + this margin
+    isExternal &&
+      'group-hover:-translate-y-1/2 group-hover:translate-x-[125%] group-hover:opacity-0',
+  )
+
+  /* sweeping-in arrow – starts hidden at left */
+  const iconB = twMerge(
+    iconBase,
+    'absolute left-0 top-full -translate-x-[125%] translate-y-0 opacity-0',
+    isExternal &&
+      'group-hover:top-1/2 group-hover:-translate-y-1/2 ' +
+        'group-hover:translate-x-0 group-hover:opacity-100',
+  )
 
   const content =
-    'content transition-transform duration-700 ease-[cubic-bezier(0.25,0.1,0.25,1)] ' +
-    (isExternal ? 'group-hover:translate-x-[var(--shift)]' : '')
+    'transition-transform duration-700 ease-[cubic-bezier(0.25,0.1,0.25,1)] ' +
+    (isExternal
+      ? 'group-hover:translate-x-[calc(var(--icon-size)+var(--spacing))]'
+      : '')
 
-  /*──────────────────────────────────
-   * 5 ▸ render
-   *─────────────────────────────────*/
+  /*─────────────── 4 ▸ render ───────────────*/
   return (
     <Link
       ref={linkRef}
       href={href}
       onClick={!noTransition && handleClick}
       style={{
-        /* tweak these two numbers to change spacing + icon size */
         '--spacing': '4px',
         '--icon-size': '11px',
-        '--shift': 'calc(var(--icon-size) + var(--spacing))',
       }}
       className={root}
       {...linkProps}
       {...props}
     >
-      {/* underline spans (replace pseudo-elements) */}
+      {/* underlines */}
       <span aria-hidden className={lineA} />
       <span aria-hidden className={lineB} />
 
-      {/*  icons + label  */}
+      {/* icon that sweeps in */}
       {isExternal && (
         <span aria-hidden className={iconB}>
           <Icon name="arrow-northeast" />
         </span>
       )}
 
+      {/* label */}
       <span className={content}>{children}</span>
 
+      {/* default icon */}
       {isExternal && (
         <span aria-hidden className={iconA}>
           <Icon name="arrow-northeast" />

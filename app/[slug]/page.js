@@ -1,5 +1,5 @@
 import { fetchAPI } from 'lib'
-import { About, Hero, Case } from './components'
+import { About, Hero, Case, Next } from './components'
 
 export async function generateMetadata(props) {
   const params = await props.params
@@ -18,17 +18,17 @@ export async function generateMetadata(props) {
       },
     },
   })
-  const projectsDoc = projectsData?.data[0]
+  const projectsDoc = projectsData?.data[0]?.attributes
 
   return {
     title: projectsDoc?.title,
-    description: projectsDoc?.info?.overview,
+    description: projectsDoc?.subtitle,
     alternates: {
       canonical: `https://www.wearenew.studio/${projectsDoc?.slug}`,
     },
     openGraph: {
       title: projectsDoc?.title,
-      description: projectsDoc?.info?.overview,
+      description: projectsDoc?.subtitle,
       url: `https://www.wearenew.studio/${projectsDoc?.slug}`,
       type: 'article',
     },
@@ -65,13 +65,61 @@ export default async function Project(props) {
       },
     },
   })
+  // Fetch the next project after the current slug (ordered by id)
+  let nextProjectsData = await fetchAPI('/projects', {
+    filters: {
+      id: {
+        $gt: projectsData?.data[0]?.id,
+      },
+    },
+    sort: ['id:asc'],
+    pagination: {
+      limit: 1,
+    },
+    populate: {
+      fields: ['title', 'description', 'slug'],
+      thumbnail: { populate: '*' },
+      info: { populate: '*' },
+      case_study: {
+        populate: {
+          media: { populate: '*' },
+          top: { populate: '*' },
+          bottom: { populate: '*' },
+        },
+      },
+    },
+  })
+
+  // If there is no next project, fetch the first one (loop back)
+  if (!nextProjectsData?.data?.length) {
+    nextProjectsData = await fetchAPI('/projects', {
+      sort: ['id:asc'],
+      pagination: {
+        limit: 1,
+      },
+      populate: {
+        fields: ['title', 'description', 'slug'],
+        thumbnail: { populate: '*' },
+        info: { populate: '*' },
+        case_study: {
+          populate: {
+            media: { populate: '*' },
+            top: { populate: '*' },
+            bottom: { populate: '*' },
+          },
+        },
+      },
+    })
+  }
   const projectsDoc = projectsData?.data[0]?.attributes
+  const nextProjectDoc = nextProjectsData?.data[0]?.attributes
 
   return (
     <>
       <Hero data={projectsDoc?.thumbnail?.data?.attributes} />
       <About data={projectsDoc} />
       <Case data={projectsDoc?.case_study} />
+      <Next data={nextProjectDoc} />
     </>
   )
 }
