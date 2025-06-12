@@ -14,6 +14,7 @@ export default function CustomLink({
   children,
   noTransition = false,
   $underline = false,
+  disabled = false,
   className,
   ...props
 }) {
@@ -45,6 +46,10 @@ export default function CustomLink({
     : {}
 
   const handleClick = (e) => {
+    if (disabled) {
+      e.preventDefault()
+      return
+    }
     if (onClick) onClick(e)
     if (!isExternal) {
       e.preventDefault()
@@ -58,6 +63,7 @@ export default function CustomLink({
   const root = twMerge(
     'group relative inline-flex w-fit cursor-pointer select-none items-center overflow-hidden',
     'text-base leading-5 2xl:text-[length:var(--base-desktop)] 2xl:leading-[var(--base-leading-desktop)]',
+    disabled && 'pointer-events-none cursor-default text-neutral-500',
     className,
   )
 
@@ -119,6 +125,7 @@ export default function CustomLink({
         '--icon-size': '11px',
       }}
       className={root}
+      disabled={disabled}
       {...linkProps}
       {...props}
     >

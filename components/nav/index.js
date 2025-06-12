@@ -103,6 +103,7 @@ export default function Nav() {
             <CustomLink
               $underline={pathname === '/insights'}
               href={'/insights'}
+              disabled
             >
               Insights
             </CustomLink>
