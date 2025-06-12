@@ -65,6 +65,7 @@ export default function RootLayout({ children }) {
         suppressHydrationWarning
       >
         <head>
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
           <meta httpEquiv="x-ua-compatible" content="ie=edge" />
           <meta name="referrer" content="no-referrer" />
           <meta name="format-detection" content="telephone=no" />

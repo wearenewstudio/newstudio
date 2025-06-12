@@ -23,7 +23,7 @@ export function Col({ title, data, className }) {
 
 export default function About({ data }) {
   return (
-    <section className="2xl:pb-(--desktop-40) relative pb-40">
+    <section className="relative pb-[clamp(5rem,10vw,10rem)] 2xl:pb-(--desktop-40)">
       <Container>
         <Grid>
           <h3 className={BigTextClass('col-start-1 col-end-5')}>

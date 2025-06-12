@@ -4,7 +4,7 @@ export default function Container(props) {
   return (
     <div
       className={twMerge(
-        '2xl:px-(--desktop-5) relative mx-auto px-5',
+        'relative mx-auto px-4 sm:px-5 2xl:px-(--desktop-5)',
         props.className,
       )}
     >
