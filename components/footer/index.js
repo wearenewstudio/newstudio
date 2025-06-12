@@ -18,7 +18,7 @@ function ContactCol({ className, title, children }) {
 
 export default function Footer({ data }) {
   return (
-    <section
+    <footer
       id="footer"
       className="2xl:py-(--desktop-5) relative h-screen w-screen py-5 text-neutral-50"
     >
@@ -79,6 +79,6 @@ export default function Footer({ data }) {
         lazyLoad={true}
         className="absolute left-0 top-0 -z-10 h-full w-full"
       />
-    </section>
+    </footer>
   )
 }

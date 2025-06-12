@@ -43,10 +43,8 @@ export default function Nav() {
 
       if (footerSection) {
         ScrollTrigger.create({
-          trigger: document.body,
-          start: `bottom-=${
-            footerSection.offsetHeight
-          } top+=${(navEl.current?.offsetHeight + navEl.current?.offsetTop) / 2}`,
+          trigger: footerSection,
+          start: `top-=10% top+=${(navEl.current?.offsetHeight + navEl.current?.offsetTop) / 2}`,
           onEnter: () => gsap.to(navEl.current, { yPercent: -100 }),
           onLeaveBack: () => gsap.to(navEl.current, { yPercent: 0 }),
         })
