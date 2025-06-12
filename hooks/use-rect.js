@@ -54,13 +54,13 @@ export function offsetLeft(element, accumulator = 0) {
 }
 
 /**
- * useRect - observe elements BoundingRect
- * @param {boolean} ignoreTransform - should include transform in the returned rect or not
- * @param {boolean} ignoreSticky - should ingnore parent sticky elements or not
- * @param {boolean} lazy - should return a state or a getter
+ * useRect - observe an element's bounding rectangle
+ * @param {boolean} ignoreTransform - include transformations in the returned rect
+ * @param {boolean} ignoreSticky - ignore parent sticky elements
+ * @param {boolean} lazy - return a state object or a getter function
  * @param {number} debounce - minimum delay between two rect computations
- * @param {number} resizeDebounce - minimum delay between two ResizeObserver computations
- * @param {Function} callback - called on value change
+ * @param {number} resizeDebounce - minimum delay between two ResizeObserver callbacks
+ * @param {Function} callback - called whenever the value changes
  * @param {Array} deps - props that should trigger a new rect computation
  */
 
