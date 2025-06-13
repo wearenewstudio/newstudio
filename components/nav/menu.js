@@ -51,14 +51,6 @@ export default function Menu({ menuOpen }) {
           </CustomLink>
           <CustomLink
             className={HugeTextClass()}
-            $underline={pathname === '/insights'}
-            href={'/insights'}
-            disabled
-          >
-            Insights
-          </CustomLink>
-          <CustomLink
-            className={HugeTextClass()}
             $underline={pathname === '/contact'}
             href={'/contact'}
           >

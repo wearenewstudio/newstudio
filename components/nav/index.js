@@ -97,18 +97,14 @@ export default function Nav() {
             </Link>
 
             <nav className="2xl:gap-(--desktop-8) hidden items-center gap-8 md:flex">
+              <CustomLink $underline={pathname === '/'} href={'/'}>
+                Home
+              </CustomLink>
               <CustomLink $underline={pathname === '/work'} href={'/work'}>
                 Work
               </CustomLink>
               <CustomLink $underline={pathname === '/about'} href={'/about'}>
                 About
-              </CustomLink>
-              <CustomLink
-                $underline={pathname === '/insights'}
-                href={'/insights'}
-                disabled
-              >
-                Insights
               </CustomLink>
               <CustomLink
                 $underline={pathname === '/contact'}
