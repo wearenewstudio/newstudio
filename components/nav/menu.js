@@ -22,7 +22,7 @@ export default function Menu({ menuOpen }) {
   return (
     <div
       className={twMerge(
-        'h-(--full-height) left-0 top-0 z-40 w-screen bg-neutral-50/75 backdrop-blur-lg dark:bg-neutral-950/75',
+        'h-(--full-height) left-0 top-0 z-40 w-screen bg-neutral-50 dark:bg-neutral-950',
         menuOpen ? 'fixed' : 'hidden',
       )}
     >

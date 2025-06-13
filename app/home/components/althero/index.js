@@ -16,7 +16,7 @@ export default function Althero({ data }) {
     () => {
       const split = new SplitText('.anim-text', {
         charsClass: 'block',
-        linesClass: 'overflow-hidden -mt-5 md:-mt-8 2xl:-mt-(--desktop-8)',
+        linesClass: 'overflow-hidden -mt-3 sm:-mt-5 md:-mt-8 2xl:-mt-(--desktop-8)',
       })
 
       gsap.fromTo(

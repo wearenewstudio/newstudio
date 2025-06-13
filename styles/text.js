@@ -2,13 +2,13 @@ import { twMerge } from 'tailwind-merge'
 
 export function DisplayTextClass(className) {
   return twMerge(
-    '2xl:text-(length:--display-desktop) text-5xl leading-none sm:text-6xl md:text-8xl',
+    '2xl:text-(length:--display-desktop) text-4xl leading-none sm:text-6xl md:text-8xl',
     className,
   )
 }
 export function HugeTextClass(className) {
   return twMerge(
-    '2xl:text-(length:--huge-desktop) text-3xl leading-none md:text-5xl',
+    '2xl:text-(length:--huge-desktop) text-2xl leading-none sm:text-3xl md:text-5xl',
     className,
   )
 }
