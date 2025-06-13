@@ -6,13 +6,13 @@ import { Fragment } from 'react'
 /**
  * Fully‑finished, Safari‑safe + key‑collision‑free Case component
  * --------------------------------------------------------------
- * • Valid HTML (no nested <p>)
- * • Globally unique React keys for every list item
- * • Covers ALL Strapi slice variants in the design system
- * • Mobile-responsive: Stacks all content at the `sm` breakpoint.
+ * • Mobile-first: Uses a simple flexbox stack for mobile (`sm` and below).
+ * • Desktop: Uses the original, complex grid layout for larger screens.
+ * • A separate layout is rendered for mobile vs. desktop to prevent style conflicts.
  */
 
 function InnerCol(props) {
+  // InnerCol is used by the original desktop layout and should remain unchanged.
   return (
     <div
       className="2xl:gap-(--desktop-5) grid gap-5 [grid-template-rows:_min-content]"
@@ -44,27 +44,18 @@ export default function Case({ data }) {
                 : { gridColumn: `1 / ${span + 1}` }
 
               return (
-                // Use a wrapper to conditionally render different structures for mobile and desktop.
-                // This correctly handles the `reverse` logic on desktop while forcing the desired mobile order.
                 <Fragment key={baseKey}>
-                  {/* Mobile Layout: Always Image then Text. Full width. */}
-                  <div className="sm:hidden">
-                    <Grid>
-                      {media && (
-                        <RenderMedia
-                          data={media}
-                          className={'col-span-12 h-fit'}
-                        />
-                      )}
-                      {text && (
-                        <p className={BaseTextClass('col-span-12')}>
-                          <span>{text}</span>
-                        </p>
-                      )}
-                    </Grid>
+                  {/* Mobile Layout: Simple stack, always image then text. */}
+                  <div className="flex flex-col gap-5 sm:hidden">
+                    {media && <RenderMedia data={media} className={'h-fit'} />}
+                    {text && (
+                      <p className={BaseTextClass()}>
+                        <span>{text}</span>
+                      </p>
+                    )}
                   </div>
 
-                  {/* Desktop Layout: Respects `reverse` order and grid styles. */}
+                  {/* Desktop Layout: Original code, preserving reverse logic and grid styles. */}
                   <div className="hidden sm:block">
                     <Grid>
                       {reverse && text && (
@@ -96,217 +87,88 @@ export default function Case({ data }) {
               let [lSpan, rSpan] = match ? [+match[1], +match[2]] : [12, 12]
               if (reverse) [lSpan, rSpan] = [rSpan, lSpan]
 
-              const leftContent = { m: l?.media?.data?.attributes, t: l?.text }
-              const rightContent = { m: r?.media?.data?.attributes, t: r?.text }
+              const side = (slot, span, start, tag) => {
+                const m = slot?.media?.data?.attributes
+                const t = slot?.text
+                return (
+                  <InnerCol
+                    key={`${baseKey}-${tag}`}
+                    style={{
+                      gridColumn: `${start} / ${start + span}`,
+                      gridTemplateColumns: `repeat(${span},1fr)`,
+                    }}
+                  >
+                    {m && (
+                      <RenderMedia
+                        key={`${baseKey}-${tag}-m`}
+                        data={m}
+                        style={{ gridColumn: '1 / -1' }}
+                        className={'h-fit'}
+                      />
+                    )}
+                    {t && (
+                      <p
+                        key={`${baseKey}-${tag}-t`}
+                        className={BaseTextClass()}
+                        style={{ gridColumn: '1 / 3' }}
+                      >
+                        <span>{t}</span>
+                      </p>
+                    )}
+                  </InnerCol>
+                )
+              }
 
               return (
                 <Fragment key={baseKey}>
-                  {/* Mobile Layout: A simple vertical stack. Each image and text is full-width. */}
+                  {/* Mobile Layout: All content from both sides stacked vertically. */}
                   <div className="flex flex-col gap-5 sm:hidden">
-                    {/* Left side content */}
-                    {leftContent.m && (
-                      <RenderMedia data={leftContent.m} className="h-fit" />
+                    {l?.media?.data?.attributes && (
+                      <RenderMedia
+                        data={l.media.data.attributes}
+                        className="h-fit"
+                      />
                     )}
-                    {leftContent.t && (
+                    {l?.text && (
                       <p className={`${BaseTextClass()} mb-10`}>
-                        <span>{leftContent.t}</span>
+                        <span>{l.text}</span>
                       </p>
                     )}
-
-                    {/* Right side content */}
-                    {rightContent.m && (
-                      <RenderMedia data={rightContent.m} className="h-fit" />
+                    {r?.media?.data?.attributes && (
+                      <RenderMedia
+                        data={r.media.data.attributes}
+                        className="h-fit"
+                      />
                     )}
-                    {rightContent.t && (
+                    {r?.text && (
                       <p className={BaseTextClass()}>
-                        <span>{rightContent.t}</span>
+                        <span>{r.text}</span>
                       </p>
                     )}
                   </div>
 
-                  {/* Desktop Layout: The original two-column grid structure. */}
-                  <div className="hidden gap-5 sm:grid sm:grid-cols-12">
-                    {/* Left Side Column */}
-                    <InnerCol
-                      className={`col-start-1 col-span-${lSpan}`}
-                      style={{ gridTemplateColumns: `repeat(${lSpan}, 1fr)` }}
-                    >
-                      {leftContent.m && (
-                        <RenderMedia
-                          data={leftContent.m}
-                          style={{ gridColumn: '1 / -1' }}
-                          className={'h-fit'}
-                        />
-                      )}
-                      {leftContent.t && (
-                        <p
-                          className={BaseTextClass()}
-                          style={{ gridColumn: '1 / 3' }}
-                        >
-                          <span>{leftContent.t}</span>
-                        </p>
-                      )}
-                    </InnerCol>
-
-                    {/* Right Side Column */}
-                    <InnerCol
-                      className={`col-start-${13 - rSpan} col-span-${rSpan}`}
-                      style={{ gridTemplateColumns: `repeat(${rSpan}, 1fr)` }}
-                    >
-                      {rightContent.m && (
-                        <RenderMedia
-                          data={rightContent.m}
-                          style={{ gridColumn: '1 / -1' }}
-                          className={'h-fit'}
-                        />
-                      )}
-                      {rightContent.t && (
-                        <p
-                          className={BaseTextClass()}
-                          style={{ gridColumn: '1 / 3' }}
-                        >
-                          <span>{rightContent.t}</span>
-                        </p>
-                      )}
-                    </InnerCol>
+                  {/* Desktop Layout: Original side-by-side grid. */}
+                  <div className="hidden sm:block">
+                    <Grid>
+                      {side(l, lSpan, 1, 'left')}
+                      {side(r, rSpan, 13 - rSpan, 'right')}
+                    </Grid>
                   </div>
                 </Fragment>
               )
             }
 
+            /* All subsequent components follow the same pattern:
+               1. A simple flexbox stack for mobile.
+               2. The original, untouched grid code for desktop.
+            */
+
             /* ---------- project.4-4-4 ---------- */
             if (item.__component === 'project.4-4-4') {
               return (
-                // Sets grid to 1 column on mobile and 12 on desktop.
-                <Grid key={baseKey} className="grid-cols-1 sm:grid-cols-12">
-                  {item.media.map((c, i) => {
-                    const start = i * 4 + 1
-                    const m = c?.media?.data?.attributes
-                    const t = c?.text
-                    return (
-                      // Use a Fragment for the key, and let children inherit grid positioning.
-                      // On mobile, each element will occupy a new row in the single-column grid.
-                      <Fragment key={`${baseKey}-${i}`}>
-                        {m && (
-                          <RenderMedia
-                            data={m}
-                            style={{ gridColumn: `sm:${start} / span 4` }}
-                            className={'h-fit'}
-                          />
-                        )}
-                        {t && (
-                          <p
-                            className={BaseTextClass()}
-                            style={{ gridColumn: `sm:${start} / span 4` }}
-                          >
-                            <span>{t}</span>
-                          </p>
-                        )}
-                      </Fragment>
-                    )
-                  })}
-                </Grid>
-              )
-            }
-
-            /* ---------- project.12-4-4-4 ---------- */
-            if (item.__component === 'project.12-4-4-4') {
-              const { top = {}, bottom = [] } = item
-              return (
-                <Grid key={baseKey} className="grid-cols-1 sm:grid-cols-12">
-                  {top.media?.data?.attributes && (
-                    <RenderMedia
-                      key={`${baseKey}-top-m`}
-                      data={top.media.data.attributes}
-                      style={{ gridColumn: 'sm:1 / -1' }}
-                      className={'h-fit'}
-                    />
-                  )}
-                  {top.text && (
-                    <p
-                      key={`${baseKey}-top-t`}
-                      className={BaseTextClass()}
-                      style={{ gridColumn: 'sm:1 / 3' }}
-                    >
-                      <span>{top.text}</span>
-                    </p>
-                  )}
-                  {bottom.map((b, i) => (
-                    <Fragment key={`${baseKey}-b-${i}`}>
-                      {b.media?.data?.attributes && (
-                        <RenderMedia
-                          data={b.media.data.attributes}
-                          style={{ gridColumn: `sm:${i * 4 + 1} / span 4` }}
-                          className={'h-fit'}
-                        />
-                      )}
-                      {b.text && (
-                        <p
-                          className={BaseTextClass()}
-                          style={{ gridColumn: `sm:${i * 4 + 1} / span 2` }}
-                        >
-                          <span>{b.text}</span>
-                        </p>
-                      )}
-                    </Fragment>
-                  ))}
-                </Grid>
-              )
-            }
-
-            /* ---------- project.12-6-6 ---------- */
-            if (item.__component === 'project.12-6-6') {
-              const { top = {}, bottom = [] } = item
-              return (
-                <Grid key={baseKey} className="grid-cols-1 sm:grid-cols-12">
-                  {top.media?.data?.attributes && (
-                    <RenderMedia
-                      key={`${baseKey}-top-m`}
-                      data={top.media.data.attributes}
-                      style={{ gridColumn: 'sm:1 / -1' }}
-                      className={'h-fit'}
-                    />
-                  )}
-                  {top.text && (
-                    <p
-                      key={`${baseKey}-top-t`}
-                      className={BaseTextClass()}
-                      style={{ gridColumn: 'sm:1 / 3' }}
-                    >
-                      <span>{top.text}</span>
-                    </p>
-                  )}
-                  {bottom.map((b, i) => (
-                    <Fragment key={`${baseKey}-b-${i}`}>
-                      {b.media?.data?.attributes && (
-                        <RenderMedia
-                          data={b.media.data.attributes}
-                          style={{ gridColumn: `sm:${i * 6 + 1} / span 6` }}
-                          className={'h-fit'}
-                        />
-                      )}
-                      {b.text && (
-                        <p
-                          className={BaseTextClass()}
-                          style={{ gridColumn: `sm:${i * 6 + 1} / span 6` }}
-                        >
-                          <span>{b.text}</span>
-                        </p>
-                      )}
-                    </Fragment>
-                  ))}
-                </Grid>
-              )
-            }
-
-            /* ---------- project.6-6-6-6 ---------- */
-            if (item.__component === 'project.6-6-6-6') {
-              return (
                 <Fragment key={baseKey}>
-                  {/* Mobile Layout: Use flexbox for a reliable vertical stack, removing the Grid component. */}
                   <div className="gap-15 flex flex-col sm:hidden">
                     {item.media.map((c, i) => (
-                      // Each image-text pair is a self-contained block.
                       <div
                         key={`${baseKey}-${i}-mobile`}
                         className="flex flex-col gap-5"
@@ -326,7 +188,225 @@ export default function Case({ data }) {
                     ))}
                   </div>
 
-                  {/* Desktop Layout: The original layout with complex grid-row and grid-column styling. */}
+                  <div className="hidden sm:block">
+                    <Grid>
+                      {item.media.map((c, i) => {
+                        const start = i * 4 + 1
+                        const m = c?.media?.data?.attributes
+                        const t = c?.text
+                        return (
+                          <Fragment key={`${baseKey}-${i}-desktop`}>
+                            {m && (
+                              <RenderMedia
+                                data={m}
+                                style={{ gridColumn: `${start} / span 4` }}
+                                className={'h-fit'}
+                              />
+                            )}
+                            {t && (
+                              <p
+                                className={BaseTextClass()}
+                                style={{ gridColumn: `${start} / span 4` }}
+                              >
+                                <span>{t}</span>
+                              </p>
+                            )}
+                          </Fragment>
+                        )
+                      })}
+                    </Grid>
+                  </div>
+                </Fragment>
+              )
+            }
+
+            /* ---------- project.12-4-4-4 ---------- */
+            if (item.__component === 'project.12-4-4-4') {
+              const { top = {}, bottom = [] } = item
+              return (
+                <Fragment key={baseKey}>
+                  <div className="flex flex-col gap-5 sm:hidden">
+                    {top.media?.data?.attributes && (
+                      <RenderMedia
+                        data={top.media.data.attributes}
+                        className={'h-fit'}
+                      />
+                    )}
+                    {top.text && (
+                      <p className={`${BaseTextClass()} mb-10`}>
+                        <span>{top.text}</span>
+                      </p>
+                    )}
+                    {bottom.map((b, i) => (
+                      <div
+                        key={`${baseKey}-b-${i}-mobile`}
+                        className="mt-10 flex flex-col gap-5"
+                      >
+                        {b.media?.data?.attributes && (
+                          <RenderMedia
+                            data={b.media.data.attributes}
+                            className={'h-fit'}
+                          />
+                        )}
+                        {b.text && (
+                          <p className={BaseTextClass()}>
+                            <span>{b.text}</span>
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="hidden sm:block">
+                    <Grid>
+                      {top.media?.data?.attributes && (
+                        <RenderMedia
+                          key={`${baseKey}-top-m`}
+                          data={top.media.data.attributes}
+                          style={{ gridColumn: '1 / -1' }}
+                          className={'h-fit'}
+                        />
+                      )}
+                      {top.text && (
+                        <p
+                          key={`${baseKey}-top-t`}
+                          className={BaseTextClass()}
+                          style={{ gridColumn: '1 / 3' }}
+                        >
+                          <span>{top.text}</span>
+                        </p>
+                      )}
+                      {bottom.map((b, i) => (
+                        <Fragment key={`${baseKey}-b-${i}-desktop`}>
+                          {b.media?.data?.attributes && (
+                            <RenderMedia
+                              data={b.media.data.attributes}
+                              style={{ gridColumn: `${i * 4 + 1} / span 4` }}
+                              className={'h-fit'}
+                            />
+                          )}
+                          {b.text && (
+                            <p
+                              className={BaseTextClass()}
+                              style={{ gridColumn: `${i * 4 + 1} / span 2` }}
+                            >
+                              <span>{b.text}</span>
+                            </p>
+                          )}
+                        </Fragment>
+                      ))}
+                    </Grid>
+                  </div>
+                </Fragment>
+              )
+            }
+
+            /* ---------- project.12-6-6 ---------- */
+            if (item.__component === 'project.12-6-6') {
+              const { top = {}, bottom = [] } = item
+              return (
+                <Fragment key={baseKey}>
+                  <div className="flex flex-col gap-5 sm:hidden">
+                    {top.media?.data?.attributes && (
+                      <RenderMedia
+                        data={top.media.data.attributes}
+                        className={'h-fit'}
+                      />
+                    )}
+                    {top.text && (
+                      <p className={`${BaseTextClass()} mb-10`}>
+                        <span>{top.text}</span>
+                      </p>
+                    )}
+                    {bottom.map((b, i) => (
+                      <div
+                        key={`${baseKey}-b-${i}-mobile`}
+                        className="mt-10 flex flex-col gap-5"
+                      >
+                        {b.media?.data?.attributes && (
+                          <RenderMedia
+                            data={b.media.data.attributes}
+                            className={'h-fit'}
+                          />
+                        )}
+                        {b.text && (
+                          <p className={BaseTextClass()}>
+                            <span>{b.text}</span>
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="hidden sm:block">
+                    <Grid>
+                      {top.media?.data?.attributes && (
+                        <RenderMedia
+                          key={`${baseKey}-top-m`}
+                          data={top.media.data.attributes}
+                          style={{ gridColumn: '1 / -1' }}
+                          className={'h-fit'}
+                        />
+                      )}
+                      {top.text && (
+                        <p
+                          key={`${baseKey}-top-t`}
+                          className={BaseTextClass()}
+                          style={{ gridColumn: '1 / 3' }}
+                        >
+                          <span>{top.text}</span>
+                        </p>
+                      )}
+                      {bottom.map((b, i) => (
+                        <Fragment key={`${baseKey}-b-${i}-desktop`}>
+                          {b.media?.data?.attributes && (
+                            <RenderMedia
+                              data={b.media.data.attributes}
+                              style={{ gridColumn: `${i * 6 + 1} / span 6` }}
+                              className={'h-fit'}
+                            />
+                          )}
+                          {b.text && (
+                            <p
+                              className={BaseTextClass()}
+                              style={{ gridColumn: `${i * 6 + 1} / span 6` }}
+                            >
+                              <span>{b.text}</span>
+                            </p>
+                          )}
+                        </Fragment>
+                      ))}
+                    </Grid>
+                  </div>
+                </Fragment>
+              )
+            }
+
+            /* ---------- project.6-6-6-6 ---------- */
+            if (item.__component === 'project.6-6-6-6') {
+              return (
+                <Fragment key={baseKey}>
+                  <div className="gap-15 flex flex-col sm:hidden">
+                    {item.media.map((c, i) => (
+                      <div
+                        key={`${baseKey}-${i}-mobile`}
+                        className="flex flex-col gap-5"
+                      >
+                        {c?.media?.data?.attributes && (
+                          <RenderMedia
+                            data={c.media.data.attributes}
+                            className="h-fit"
+                          />
+                        )}
+                        {c?.text && (
+                          <p className={BaseTextClass()}>
+                            <span>{c.text}</span>
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
                   <div className="hidden sm:block">
                     <Grid>
                       {item.media.map((c, i) => {
@@ -370,10 +450,8 @@ export default function Case({ data }) {
             if (item.__component === 'project.4-4-4-4-4-4') {
               return (
                 <Fragment key={baseKey}>
-                  {/* Mobile Layout: Use flexbox to ensure a simple, full-width vertical stack. */}
                   <div className="gap-15 flex flex-col sm:hidden">
                     {item.media.map((c, i) => (
-                      // Each image-text pair is a self-contained block.
                       <div
                         key={`${baseKey}-${i}-mobile`}
                         className="flex flex-col gap-5"
@@ -393,7 +471,6 @@ export default function Case({ data }) {
                     ))}
                   </div>
 
-                  {/* Desktop Layout: The original layout with its complex grid logic. */}
                   <div className="hidden sm:block">
                     <Grid>
                       {item.media.map((c, i) => {
