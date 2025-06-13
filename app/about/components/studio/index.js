@@ -1,16 +1,10 @@
 import { HugeTextClass } from 'styles'
 import Wrapper from '../wrapper'
 
-export default function Studio() {
+export default function Studio({ data }) {
   return (
     <Wrapper title={'Our Studio'}>
-      <p className={HugeTextClass()}>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-        commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-        velit esse cillum dolore eu fugiat nulla pariatur.
-      </p>
+      <p className={HugeTextClass()}>{data}</p>
     </Wrapper>
   )
 }

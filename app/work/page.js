@@ -3,6 +3,10 @@ import { fetchAPI } from 'lib'
 import { Container, DisplayTextClass } from 'styles'
 import { IndexSection, WorkSection } from './components'
 
+export const metadata = {
+  title: 'Work',
+}
+
 export default async function Work({ searchParams }) {
   const data = await fetchAPI('/projects', {
     populate: {
