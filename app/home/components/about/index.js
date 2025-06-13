@@ -13,10 +13,10 @@ export default function About() {
           </p>
 
           <div className="2xl:mt-(--desktop-10) 2xl:gap-(--desktop-3) mt-10 flex gap-3">
-            <CustomButton primary href={'/about'}>
+            <CustomButton move primary href={'/about'}>
               See our capabilities
             </CustomButton>
-            <CustomButton primary href={'/about'}>
+            <CustomButton move primary href={'/about'}>
               Explore Studio
             </CustomButton>
           </div>
