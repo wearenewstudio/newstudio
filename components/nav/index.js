@@ -5,13 +5,14 @@ import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { twMerge } from 'tailwind-merge'
 import { CustomLink, Icon, slideInOut, Toggle } from 'components'
-import { Container } from 'styles'
+import { BigTextClass, Container, SmallTextClass } from 'styles'
 import { useLenis } from 'lenis/react'
 
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/dist/ScrollTrigger'
 import { useTransitionRouter } from 'next-view-transitions'
+import Menu from './menu'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -21,6 +22,7 @@ export default function Nav() {
   const router = useTransitionRouter()
   const lenis = useLenis()
   const [scrolledPast, setScrolledPast] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
 
   useGSAP(
     () => {
@@ -66,54 +68,70 @@ export default function Nav() {
   )
 
   return (
-    <header
-      ref={navEl}
-      className={twMerge(
-        '2xl:py-(--desktop-5) fixed left-0 top-0 z-50 w-full py-5 text-neutral-50',
-        scrolledPast ? 'mix-blend-difference' : 'mix-blend-normal',
-      )}
-    >
-      <Container>
-        <div className="flex w-full items-center justify-between">
-          <Link
-            className="2xl:w-(--desktop-24) w-24 text-neutral-50"
-            href={'/'}
-            onClick={(e) => {
-              e.preventDefault()
+    <>
+      <header
+        ref={navEl}
+        className={twMerge(
+          '2xl:py-(--desktop-5) fixed left-0 top-0 z-50 w-full py-5 text-neutral-50',
+          scrolledPast ? 'mix-blend-difference' : 'mix-blend-normal',
+        )}
+      >
+        <Container>
+          <div className="flex w-full items-center justify-between">
+            <Link
+              className="2xl:w-(--desktop-24) w-24 text-neutral-50"
+              href={'/'}
+              onClick={(e) => {
+                e.preventDefault()
 
-              if (pathname === '/') {
-                lenis.scrollTo(0)
-              } else {
-                router.push('/', {
-                  onTransitionReady: slideInOut,
-                })
-              }
-            }}
-          >
-            <Icon name="logo" />
-          </Link>
-
-          <nav className="2xl:gap-(--desktop-8) flex items-center gap-8">
-            <CustomLink $underline={pathname === '/work'} href={'/work'}>
-              Work
-            </CustomLink>
-            <CustomLink $underline={pathname === '/about'} href={'/about'}>
-              About
-            </CustomLink>
-            <CustomLink
-              $underline={pathname === '/insights'}
-              href={'/insights'}
-              disabled
+                if (pathname === '/') {
+                  lenis.scrollTo(0)
+                } else {
+                  router.push('/', {
+                    onTransitionReady: slideInOut,
+                  })
+                }
+              }}
             >
-              Insights
-            </CustomLink>
-            <CustomLink $underline={pathname === '/contact'} href={'/contact'}>
-              Contact
-            </CustomLink>
-            <Toggle />
-          </nav>
-        </div>
-      </Container>
-    </header>
+              <Icon name="logo" />
+            </Link>
+
+            <nav className="2xl:gap-(--desktop-8) hidden items-center gap-8 md:flex">
+              <CustomLink $underline={pathname === '/work'} href={'/work'}>
+                Work
+              </CustomLink>
+              <CustomLink $underline={pathname === '/about'} href={'/about'}>
+                About
+              </CustomLink>
+              <CustomLink
+                $underline={pathname === '/insights'}
+                href={'/insights'}
+                disabled
+              >
+                Insights
+              </CustomLink>
+              <CustomLink
+                $underline={pathname === '/contact'}
+                href={'/contact'}
+              >
+                Contact
+              </CustomLink>
+              <Toggle />
+            </nav>
+
+            <Toggle className="-translate-1/2 absolute left-1/2 top-1/2 md:hidden" />
+
+            <button
+              aria-label="Toggle Menu"
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="relative cursor-pointer border-0 outline-0 md:hidden"
+            >
+              <p className={SmallTextClass()}>Menu</p>
+            </button>
+          </div>
+        </Container>
+      </header>
+      <Menu menuOpen={menuOpen} />
+    </>
   )
 }

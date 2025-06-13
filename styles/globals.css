@@ -45,6 +45,8 @@
 
   --base-desktop: calc(var(--vw-unit) * 12);
   --base-leading-desktop: calc(var(--vw-unit) * 12);
+
+  --breakpoint-xs: 30rem;
 }
 @media (hover: none) and (pointer: coarse) {
   .scrollbar-thumb {

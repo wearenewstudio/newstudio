@@ -16,7 +16,7 @@ export default function Althero({ data }) {
     () => {
       const split = new SplitText('.anim-text', {
         charsClass: 'block',
-        linesClass: 'overflow-hidden -mt-8 2xl:-mt-(--desktop-8)',
+        linesClass: 'overflow-hidden -mt-5 md:-mt-8 2xl:-mt-(--desktop-8)',
       })
 
       gsap.fromTo(
@@ -34,7 +34,10 @@ export default function Althero({ data }) {
   )
 
   return (
-    <section ref={sectionEl} className="relative pb-[10vh] pt-[25vh]">
+    <section
+      ref={sectionEl}
+      className="pt-35 pb-15 relative md:pb-[10vh] md:pt-[25vh]"
+    >
       <Container>
         <h1 className={DisplayTextClass('anim-text leading-tight')}>
           {data.split('\n').map((line, index) => (

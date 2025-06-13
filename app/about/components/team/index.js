@@ -39,7 +39,7 @@ const Partner = ({ name, image, position, description }) => {
 export default function Team() {
   return (
     <Wrapper title={'Partners'}>
-      <div className="2xl:gap-(--desktop-5) grid grid-cols-2 gap-5">
+      <div className="2xl:gap-(--desktop-5) xs:grid-cols-2 grid grid-cols-1 gap-10 xs:gap-5">
         {PARTNERS.map((partner) => (
           <Partner
             key={partner.name}

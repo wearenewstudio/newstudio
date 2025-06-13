@@ -60,7 +60,7 @@ export default function Capabilities() {
         We offer eight programs tailored to each type of transformation.
       </p>
 
-      <div className="2xl:gap-(--desktop-5) 2xl:mt-(--desktop-10) mt-10 grid grid-cols-2 gap-5">
+      <div className="2xl:gap-(--desktop-5) 2xl:mt-(--desktop-10) mt-10 grid grid-cols-1 xs:grid-cols-2 gap-5">
         {CARDS.map((card, index) => (
           <Card key={index} title={card.title} description={card.description} />
         ))}

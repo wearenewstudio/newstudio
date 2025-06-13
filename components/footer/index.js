@@ -16,15 +16,15 @@ function ContactCol({ className, title, children }) {
   )
 }
 
-export default function Footer({ data }) {
+export default function Footer() {
   return (
     <footer
       id="footer"
       className="2xl:py-(--desktop-5) relative h-screen w-screen py-5 text-neutral-50"
     >
       <Container className="flex h-full w-full flex-col justify-between">
-        <Grid>
-          <div className="col-start-1 col-end-6">
+        <Grid className="h-fit gap-y-10">
+          <div className="col-start-1 col-end-13 md:col-end-6">
             <p className={BigTextClass()}>
               Build Your New
               <br />
@@ -32,13 +32,23 @@ export default function Footer({ data }) {
             </p>
           </div>
 
-          <ContactCol className={'col-start-6 col-end-9'} title={'Contact'}>
+          <ContactCol
+            className={
+              'xs:col-end-5 col-start-1 col-end-8 md:col-start-6 md:col-end-9'
+            }
+            title={'Contact'}
+          >
             <CustomLink href={'mailto:hello@wearenew.studio'}>
               hello@wearenew.studio
             </CustomLink>
           </ContactCol>
 
-          <ContactCol className={'col-start-9 col-end-11'} title={'Socials'}>
+          <ContactCol
+            className={
+              'xs:col-start-7 xs:col-end-10 col-start-9 col-end-13 md:col-start-9 md:col-end-11'
+            }
+            title={'Socials'}
+          >
             <CustomLink href={'https://www.instagram.com/wearenewstudio'}>
               Instagram
             </CustomLink>
@@ -48,7 +58,12 @@ export default function Footer({ data }) {
             <CustomLink href={'https://www.dribbble.com'}>Dribbble</CustomLink>
           </ContactCol>
 
-          <ContactCol className={'col-start-11 col-end-13'} title={'Sitemap'}>
+          <ContactCol
+            className={
+              'xs:col-start-11 xs:col-end-13 col-start-1 col-end-5 md:col-start-11 md:col-end-13'
+            }
+            title={'Sitemap'}
+          >
             <CustomLink $underline href={'/'}>
               Home
             </CustomLink>

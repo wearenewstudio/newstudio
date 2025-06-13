@@ -32,7 +32,7 @@ export default function Work({ data }) {
           Selected Work
         </h2>
 
-        <Grid className="2xl:gap-y-(--desktop-20) gap-y-20">
+        <Grid className="2xl:gap-y-(--desktop-20) gap-y-10 md:gap-y-20">
           {data?.map((_, index) => {
             let colClasses
             switch (index) {
