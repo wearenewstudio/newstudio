@@ -1,6 +1,7 @@
 import { ViewTransitions } from 'next-view-transitions'
 import { RealViewport, ResetGSAP } from 'lib'
 import { NewStudioSans } from 'styles'
+import { Analytics } from '@vercel/analytics/next'
 
 import '/styles/globals.css'
 
@@ -93,6 +94,7 @@ export default function RootLayout({ children }) {
           {children}
           <RealViewport />
           <ResetGSAP />
+          <Analytics />
         </body>
       </html>
     </ViewTransitions>
