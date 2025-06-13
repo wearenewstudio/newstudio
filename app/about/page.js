@@ -24,8 +24,6 @@ export default async function About() {
   })
   const doc = data?.data?.attributes
 
-  console.log(doc)
-
   return (
     <>
       <Hero />

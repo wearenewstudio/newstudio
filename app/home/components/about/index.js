@@ -7,9 +7,12 @@ export default function About() {
       <Container>
         <div className="2xl:max-w-3/5 max-w-4xl">
           <p className={HugeTextClass()}>
-            We are a <u>business transformation studio</u> focused on redefining
-            brand experiences and crafting strategies that drive meaninful
-            change.
+            We are a{' '}
+            <span className="after:border-b-1">
+              business transformation studio
+            </span>{' '}
+            focused on redefining brand experiences and crafting strategies that
+            drive meaninful change.
           </p>
 
           <div className="2xl:mt-(--desktop-10) 2xl:gap-(--desktop-3) mt-10 flex gap-3">
@@ -17,7 +20,7 @@ export default function About() {
               See our capabilities
             </CustomButton>
             <CustomButton move primary href={'/about'}>
-              Explore Studio
+              Explore studio
             </CustomButton>
           </div>
         </div>

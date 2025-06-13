@@ -1,17 +1,19 @@
 import { CustomLink, Icon, UnicornScene } from 'components'
-import { BaseTextClass, BigTextClass, Container, Grid } from 'styles'
+import { BaseTextClass, Container, Grid, HugeTextClass } from 'styles'
 import { twMerge } from 'tailwind-merge'
 
 function ContactCol({ className, title, children }) {
   return (
     <div
       className={twMerge(
-        '2xl:gap-(--desktop-1) flex flex-col gap-1',
+        '2xl:gap-(--desktop-4) flex flex-col gap-4',
         className,
       )}
     >
       <p className={BaseTextClass('text-neutral-300')}>{title}</p>
-      <div className="flex flex-col">{children}</div>
+      <div className="2xl:gap-(--desktop-1) flex flex-col gap-1">
+        {children}
+      </div>
     </div>
   )
 }
@@ -25,7 +27,7 @@ export default function Footer() {
       <Container className="flex h-full w-full flex-col justify-between">
         <Grid className="h-fit gap-y-10">
           <div className="col-start-1 col-end-13 md:col-end-6">
-            <p className={BigTextClass()}>
+            <p className={HugeTextClass()}>
               Build Your New
               <br />
               Future With Us.

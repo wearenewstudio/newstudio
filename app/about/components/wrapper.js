@@ -9,7 +9,7 @@ export default function Wrapper({ children, title }) {
             {title}
           </p>
           <div
-            className={'col-start-1 col-end-13 md:col-start-4 lg:col-start-6'}
+            className={'col-start-1 col-end-13 md:col-start-4 lg:col-start-4'}
           >
             {children}
           </div>
