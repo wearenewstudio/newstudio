@@ -1,5 +1,5 @@
 import Wrapper from '../wrapper'
-import { BaseTextClass, RenderMedia, SmallTextClass } from 'styles'
+import { BaseTextClass, RenderMedia, RenderText, SmallTextClass } from 'styles'
 
 const Partner = ({ name, image, position, description }) => {
   return (
@@ -13,7 +13,10 @@ const Partner = ({ name, image, position, description }) => {
         <p className={BaseTextClass('text-neutral-500')}>{position}</p>
       </div>
 
-      <p className={BaseTextClass()}>{description}</p>
+      <RenderText
+        text={description}
+        className={BaseTextClass('md:max-w-9/10 max-w-full')}
+      />
     </div>
   )
 }

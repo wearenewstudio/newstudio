@@ -48,3 +48,16 @@ export function RenderMedia({
 
   return null
 }
+
+export function RenderText({ text, className }) {
+  return (
+    <>
+      {text.split('\n').map((_, index) => (
+        <p className={className} key={index}>
+          {_}
+          <br />
+        </p>
+      ))}
+    </>
+  )
+}

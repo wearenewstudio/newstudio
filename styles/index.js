@@ -8,4 +8,4 @@ export {
   SmallTextClass,
   BaseTextClass,
 } from './text'
-export { RenderMedia } from './mixins'
+export { RenderMedia, RenderText } from './mixins'
