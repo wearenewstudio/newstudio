@@ -54,9 +54,6 @@ export default function Footer() {
             <CustomLink href={'https://www.instagram.com/wearenewstudio'}>
               Instagram
             </CustomLink>
-            <CustomLink href={'https://www.linkedin.com/company/newstudio'}>
-              LinkedIn
-            </CustomLink>
             <CustomLink href={'https://www.dribbble.com'}>Dribbble</CustomLink>
           </ContactCol>
 
