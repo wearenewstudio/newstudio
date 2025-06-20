@@ -122,7 +122,7 @@ export default function Nav() {
               onClick={() => setMenuOpen(!menuOpen)}
               className="relative cursor-pointer border-0 outline-0 md:hidden"
             >
-              <p className={SmallTextClass()}>Menu</p>
+              <p className={SmallTextClass()}>{menuOpen ? 'Close' : 'Menu'}</p>
             </button>
           </div>
         </Container>

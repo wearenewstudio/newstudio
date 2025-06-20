@@ -12,7 +12,7 @@ const Card = ({ title, description }) => {
 
 export default function Capabilities({ data }) {
   return (
-    <Wrapper title={'Capabilities'}>
+    <Wrapper id={'capabilities'} title={'Capabilities'}>
       <p className={HugeTextClass()}>{data?.capabilities_text}</p>
 
       <div className="2xl:gap-(--desktop-5) 2xl:mt-(--desktop-10) xs:grid-cols-2 mt-10 grid grid-cols-1 gap-5">

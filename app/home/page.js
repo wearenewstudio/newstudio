@@ -34,7 +34,7 @@ export default async function Home() {
   return (
     <>
       <Althero data={doc?.hero_title} />
-      <Reel />
+      <Reel data={doc?.reel?.data?.attributes} />
       <About />
       <Work data={doc?.work?.selected?.data} />
     </>

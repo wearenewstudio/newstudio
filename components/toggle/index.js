@@ -22,7 +22,7 @@ export default function Toggle({ className }) {
     <button
       aria-label="Toggle dark mode"
       className={twMerge(
-        '"2xl:h-(--desktop-2) 2xl:w-(--desktop-2) dark:bg-neutral-50" xs:h-2 xs:w-2 h-3 w-3 cursor-pointer rounded-full border-none bg-neutral-50 sm:mt-1',
+        '2xl:h-(--desktop-2) 2xl:w-(--desktop-2) xs:h-2 xs:w-2 h-3 w-3 cursor-pointer rounded-full border-none bg-neutral-50 sm:mt-1 dark:bg-neutral-50',
         className,
       )}
       onClick={() => setIsDark(!isDark)}

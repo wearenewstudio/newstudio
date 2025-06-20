@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import CustomLink from 'components/link'
 import { usePathname } from 'next/navigation'
 import { useLenis } from 'lenis/react'
-import { HugeTextClass, Container, SmallTextClass } from 'styles'
+import { HugeTextClass, Container, SmallTextClass, DisplayTextClass, BigTextClass } from 'styles'
 import { twMerge } from 'tailwind-merge'
 
 export default function Menu({ menuOpen }) {
@@ -29,28 +29,28 @@ export default function Menu({ menuOpen }) {
       <Container className="flex h-full w-full flex-col justify-between py-20">
         <nav className="flex flex-col gap-2">
           <CustomLink
-            className={HugeTextClass()}
+            className={DisplayTextClass()}
             $underline={pathname === '/'}
             href={'/'}
           >
             Home
           </CustomLink>
           <CustomLink
-            className={HugeTextClass()}
+            className={DisplayTextClass()}
             $underline={pathname === '/work'}
             href={'/work'}
           >
             Work
           </CustomLink>
           <CustomLink
-            className={HugeTextClass()}
+            className={DisplayTextClass()}
             $underline={pathname === '/about'}
             href={'/about'}
           >
             About
           </CustomLink>
           <CustomLink
-            className={HugeTextClass()}
+            className={DisplayTextClass()}
             $underline={pathname === '/contact'}
             href={'/contact'}
           >
@@ -59,8 +59,8 @@ export default function Menu({ menuOpen }) {
         </nav>
 
         <div>
-          <p className={SmallTextClass('mb-2')}>Let's Work Together</p>
-          <CustomLink href={'mailto:hello@wearenew.studio'}>
+          <p className={BigTextClass('mb-2')}>Let's Work Together</p>
+          <CustomLink className={SmallTextClass()} href={'mailto:hello@wearenew.studio'}>
             hello@wearenew.studio
           </CustomLink>
         </div>

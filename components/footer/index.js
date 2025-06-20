@@ -75,8 +75,8 @@ export default function Footer() {
             <CustomLink $underline href={'/about'}>
               About
             </CustomLink>
-            <CustomLink $underline href={'/services'}>
-              Services
+            <CustomLink $underline href={'/about#capabilities'}>
+              Capabilities
             </CustomLink>
             <CustomLink $underline href={'/contact'}>
               Contact
