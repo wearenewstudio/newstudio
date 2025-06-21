@@ -22,7 +22,7 @@ export default function Footer() {
   return (
     <footer
       id="footer"
-      className="2xl:py-(--desktop-5) relative h-screen w-screen py-5 text-neutral-50"
+      className="2xl:py-(--desktop-5) h-(--full-height) relative w-screen py-5 text-neutral-50"
     >
       <Container className="flex h-full w-full flex-col justify-between">
         <Grid className="h-fit gap-y-10">
