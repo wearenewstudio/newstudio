@@ -3,5 +3,9 @@ export const metadata = {
 }
 
 export default function Contact() {
-  return <></>
+  return (
+    <>
+      <p className="hidden">Contact</p>
+    </>
+  )
 }

@@ -7,9 +7,8 @@ import Vimeo from '@u-wave/react-vimeo'
 
 gsap.registerPlugin(useGSAP)
 
-export default function Reel({ data }) {
+export default function Reel() {
   const sectionEl = useRef(null)
-  console.log(data)
 
   useGSAP(
     () => {
