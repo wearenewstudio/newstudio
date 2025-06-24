@@ -15,7 +15,7 @@ import { Fragment } from 'react'
 function MediaWithText({ media, text, className = '', style = {}, textClass = '', textStyle = {} }) {
   if (!media && !text) return null
   return (
-    <div className={className} style={style}>
+    <div className={`flex flex-col gap-5 ${className}`} style={style}>
       {media && <RenderMedia data={media} className={'h-fit'} />}
       {text && (
         <p className={`${BaseTextClass()} ${textClass}`} style={textStyle}>
@@ -79,7 +79,7 @@ export default function Case({ data }) {
               return (
                 <Fragment key={baseKey}>
                   {/* Mobile Layout: Simple stack, always image then text. */}
-                  <MediaWithText media={media} text={text} className="flex flex-col gap-5 sm:hidden" />
+                  <MediaWithText media={media} text={text} className="sm:hidden" />
 
                   {/* Desktop Layout: Original code, preserving reverse logic and grid styles. */}
                   <div className="hidden sm:block">
@@ -155,7 +155,7 @@ export default function Case({ data }) {
                         key={`${baseKey}-${i}-mobile`}
                         media={c?.media?.data?.attributes}
                         text={c?.text}
-                        className="flex flex-col gap-5"
+                        className="sm:hidden"
                       />
                     ))}
                   </div>
@@ -264,7 +264,7 @@ export default function Case({ data }) {
                         key={`${baseKey}-${i}-mobile`}
                         media={c?.media?.data?.attributes}
                         text={c?.text}
-                        className="flex flex-col gap-5"
+                        className="sm:hidden"
                       />
                     ))}
                   </div>
@@ -300,7 +300,7 @@ export default function Case({ data }) {
                         key={`${baseKey}-${i}-mobile`}
                         media={c?.media?.data?.attributes}
                         text={c?.text}
-                        className="flex flex-col gap-5"
+                        className="sm:hidden"
                       />
                     ))}
                   </div>
