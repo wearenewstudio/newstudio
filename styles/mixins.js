@@ -1,5 +1,6 @@
 import { twMerge } from 'tailwind-merge'
 import Image from 'next/image'
+import VideoPlayer from '../components/video-player'
 
 export function RenderMedia({
   fill = false,
@@ -31,18 +32,21 @@ export function RenderMedia({
       </div>
     )
   } else if (data?.mime?.startsWith('video/')) {
+    const videoUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL + data?.url
+    
     return (
-      <div
-        playsInline
-        autoPlay
-        muted
-        loop
-        aria-label={data?.alternativeText || 'New Studio Case Study Video'}
-        className={twMerge('h-full w-full object-cover', className)}
+      <VideoPlayer
+        src={videoUrl}
+        poster={data?.placeholder || data?.preview}
+        alt={data?.alternativeText || 'New Studio Case Study Video'}
+        className={className}
+        autoPlay={true}
+        muted={true}
+        loop={true}
+        playsInline={true}
+        controls={false}
         {...props}
-      >
-        <source src={process.env.NEXT_PUBLIC_STRAPI_API_URL + data?.url} />
-      </div>
+      />
     )
   }
 

@@ -4,10 +4,11 @@ import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { useRef } from 'react'
 import Vimeo from '@u-wave/react-vimeo'
+import { RenderMedia } from 'styles'
 
 gsap.registerPlugin(useGSAP)
 
-export default function Reel() {
+export default function Reel({ data }) {
   const sectionEl = useRef(null)
 
   useGSAP(
@@ -25,21 +26,7 @@ export default function Reel() {
 
   return (
     <div ref={sectionEl} className="aspect-video h-auto w-full">
-      <Vimeo
-        video={'https://vimeo.com/1093177478/ab319dec9f'}
-        autoplay={true}
-        paused={false}
-        showByline={false}
-        controls={false}
-        loop={true}
-        showTitle={false}
-        responsive={true}
-        muted={true}
-        autopause={false}
-        dnt={true}
-        keyboard={false}
-        background={true}
-      />
+      <RenderMedia data={data} />
     </div>
   )
 }
