@@ -89,7 +89,7 @@ export default function Case({ data }) {
   return (
     <section className="relative">
       <Container>
-        <div className="2xl:gap-(--desktop-20) gap-20 flex flex-col">
+        <div className="2xl:gap-(--desktop-24) gap-24 flex flex-col">
           {data?.map((item, index) => {
             const baseKey = `${item.__component}-${item?.id ?? index}`
 
