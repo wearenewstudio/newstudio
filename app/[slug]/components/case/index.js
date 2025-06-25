@@ -9,16 +9,40 @@ import { Fragment } from 'react'
  * • Mobile-first: Uses a simple flexbox stack for mobile (`sm` and below).
  * • Desktop: Uses the original, complex grid layout for larger screens.
  * • A separate layout is rendered for mobile vs. desktop to prevent style conflicts.
+ * • Text spans 2 columns within the available media space on desktop.
  */
 
+// Helper: Calculate text width as 2 columns within the media span
+function calculateTextWidth(mediaSpan) {
+  if (mediaSpan >= 12) return '100%' // Full width for 12-column spans
+  if (mediaSpan <= 2) return '100%' // Full width for very small spans
+  
+  // Calculate what 2 columns would be within the media span
+  // Formula: (2 / mediaSpan) * 100%
+  const textColumnRatio = 2 / mediaSpan
+  const textWidthPercentage = Math.min(textColumnRatio * 100, 100)
+  
+  return `${textWidthPercentage}%`
+}
+
 // Helper: Render an image with its text below (if any)
-function MediaWithText({ media, text, className = '', style = {}, textClass = '', textStyle = {} }) {
+function MediaWithText({ media, text, className = '', style = {}, textClass = '', textStyle = {}, mediaSpan = 12 }) {
   if (!media && !text) return null
+  
+  const textWidth = calculateTextWidth(mediaSpan)
+  
   return (
     <div className={`flex flex-col gap-5 ${className}`} style={style}>
       {media && <RenderMedia data={media} className={'h-fit'} />}
       {text && (
-        <p className={`${BaseTextClass()} ${textClass}`} style={textStyle}>
+        <p 
+          className={`${BaseTextClass()} ${textClass}`} 
+          style={{ 
+            ...textStyle,
+            maxWidth: textWidth,
+            width: textWidth
+          }}
+        >
           <span>{text}</span>
         </p>
       )}
@@ -32,6 +56,8 @@ function GridRow({ items, colSpan, startCol = 1, row = 1, keyPrefix = '' }) {
     const m = c?.media?.data?.attributes
     const t = c?.text
     const col = startCol + i * colSpan
+    const textWidth = calculateTextWidth(colSpan)
+    
     return (
       <Fragment key={`${keyPrefix}-${i}`}>
         {m && (
@@ -44,7 +70,12 @@ function GridRow({ items, colSpan, startCol = 1, row = 1, keyPrefix = '' }) {
         {t && (
           <p
             className={BaseTextClass()}
-            style={{ gridColumn: `${col} / span ${colSpan}`, gridRow: row + 1 }}
+            style={{ 
+              gridColumn: `${col} / span ${colSpan}`, 
+              gridRow: row + 1,
+              maxWidth: textWidth,
+              width: textWidth
+            }}
           >
             <span>{t}</span>
           </p>
@@ -58,7 +89,7 @@ export default function Case({ data }) {
   return (
     <section className="relative">
       <Container>
-        <div className="2xl:gap-(--desktop-15) gap-15 flex flex-col">
+        <div className="2xl:gap-(--desktop-20) gap-20 flex flex-col">
           {data?.map((item, index) => {
             const baseKey = `${item.__component}-${item?.id ?? index}`
 
@@ -121,18 +152,20 @@ export default function Case({ data }) {
                     <MediaWithText media={r?.media?.data?.attributes} text={r?.text} />
                   </div>
 
-                  {/* Desktop Layout: Original side-by-side grid. */}
+                  {/* Desktop Layout: Original side-by-side grid with calculated text widths. */}
                   <div className="hidden sm:block">
                     <Grid>
                       <MediaWithText
                         media={l?.media?.data?.attributes}
                         text={l?.text}
                         style={{ gridColumn: `1 / span ${lSpan}` }}
+                        mediaSpan={lSpan}
                       />
                       <MediaWithText
                         media={r?.media?.data?.attributes}
                         text={r?.text}
                         style={{ gridColumn: `${13 - rSpan} / span ${rSpan}` }}
+                        mediaSpan={rSpan}
                       />
                     </Grid>
                   </div>
@@ -142,7 +175,7 @@ export default function Case({ data }) {
 
             /* All subsequent components follow the same pattern:
                1. A simple flexbox stack for mobile.
-               2. The original, untouched grid code for desktop.
+               2. The original, untouched grid code for desktop with calculated text widths.
             */
 
             /* ---------- project.4-4-4 ---------- */
@@ -168,6 +201,7 @@ export default function Case({ data }) {
                           media={c?.media?.data?.attributes}
                           text={c?.text}
                           style={{ gridColumn: `${i * 4 + 1} / span 4` }}
+                          mediaSpan={4}
                         />
                       ))}
                     </Grid>
@@ -200,6 +234,7 @@ export default function Case({ data }) {
                         text={top.text}
                         style={{ gridColumn: '1 / -1' }}
                         className="mb-10"
+                        mediaSpan={12}
                       />
                       {bottom.map((b, i) => (
                         <MediaWithText
@@ -207,6 +242,7 @@ export default function Case({ data }) {
                           media={b.media?.data?.attributes}
                           text={b.text}
                           style={{ gridColumn: `${i * 4 + 1} / span 4` }}
+                          mediaSpan={4}
                         />
                       ))}
                     </Grid>
@@ -239,6 +275,7 @@ export default function Case({ data }) {
                         text={top.text}
                         style={{ gridColumn: '1 / -1' }}
                         className="mb-10"
+                        mediaSpan={12}
                       />
                       {bottom.map((b, i) => (
                         <MediaWithText
@@ -246,6 +283,7 @@ export default function Case({ data }) {
                           media={b.media?.data?.attributes}
                           text={b.text}
                           style={{ gridColumn: `${i * 6 + 1} / span 6` }}
+                          mediaSpan={6}
                         />
                       ))}
                     </Grid>
@@ -280,6 +318,7 @@ export default function Case({ data }) {
                               media={c?.media?.data?.attributes}
                               text={c?.text}
                               style={{ gridColumn: `${start} / span 6`, gridRow: row }}
+                              mediaSpan={6}
                             />
                           </Fragment>
                         )
@@ -316,6 +355,7 @@ export default function Case({ data }) {
                               media={c?.media?.data?.attributes}
                               text={c?.text}
                               style={{ gridColumn: `${start} / span 4`, gridRow: row }}
+                              mediaSpan={4}
                             />
                           </Fragment>
                         )
