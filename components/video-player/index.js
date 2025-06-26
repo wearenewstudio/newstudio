@@ -27,6 +27,7 @@ export default function VideoPlayer({
   const [isMobile, setIsMobile] = useState(false)
   const [showControls, setShowControls] = useState(false)
   const [hasUserInteracted, setHasUserInteracted] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
   // Detect mobile devices and browser capabilities
   useEffect(() => {
@@ -52,12 +53,14 @@ export default function VideoPlayer({
   // Handle video events
   const handleLoadedData = useCallback(() => {
     setError(false)
+    setIsLoading(false)
     onLoad?.()
   }, [onLoad])
 
   const handleError = useCallback((e) => {
     console.error('Video error:', e)
     setError(true)
+    setIsLoading(false)
     onError?.(e)
   }, [onError])
 
@@ -181,6 +184,10 @@ export default function VideoPlayer({
 
   return (
     <div className={twMerge('relative h-full w-full overflow-hidden', className)} {...props}>
+      {/* Black background overlay while loading */}
+      {isLoading && !error && (
+        <div className="absolute inset-0 z-10 bg-black transition-opacity duration-300" />
+      )}
       <video
         ref={videoRef}
         className="h-full w-full object-cover"
