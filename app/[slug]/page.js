@@ -27,7 +27,7 @@ export async function generateMetadata(props) {
       canonical: `https://www.wearenew.studio/${projectsDoc?.slug}`,
     },
     openGraph: {
-      title: projectsDoc?.title,
+      title: `${projectsDoc?.title} Case Study | New Studio`,
       description: projectsDoc?.subtitle,
       url: `https://www.wearenew.studio/${projectsDoc?.slug}`,
       type: 'article',
