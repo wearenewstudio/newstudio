@@ -3,7 +3,6 @@
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { useRef } from 'react'
-import Vimeo from '@u-wave/react-vimeo'
 import { RenderMedia } from 'styles'
 
 gsap.registerPlugin(useGSAP)
