@@ -189,7 +189,7 @@ export default function VideoPlayer({
         muted={muted}
         loop={loop}
         playsInline={playsInline}
-        controls={controls || showControls}
+        controls={!isMobile && (controls || showControls)}
         preload={preload}
         aria-label={alt || 'Video content'}
       >
