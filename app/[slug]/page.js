@@ -16,6 +16,7 @@ export async function generateMetadata(props) {
       info: {
         populate: '*',
       },
+      thumbnail: { populate: '*' },
     },
   })
   const projectsDoc = projectsData?.data[0]?.attributes
@@ -27,10 +28,18 @@ export async function generateMetadata(props) {
       canonical: `https://www.wearenew.studio/${projectsDoc?.slug}`,
     },
     openGraph: {
-      title: `${projectsDoc?.title} Case Study | New Studio`,
+      title: `${projectsDoc?.title} | New Studio`,
       description: projectsDoc?.subtitle,
       url: `https://www.wearenew.studio/${projectsDoc?.slug}`,
       type: 'article',
+      siteName: 'Case Study by New Studio',
+      images: {
+        url: projectsDoc?.thumbnail?.data?.mime?.startsWith('image/')
+          ? `${process.env.NEXT_PUBLIC_STRAPI_API_URL + projectsDoc?.thumbnail?.data?.attributes?.url}`
+          : undefined,
+        width: 1200,
+        height: 630,
+      },
     },
   }
 }
