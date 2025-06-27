@@ -34,8 +34,10 @@ export async function generateMetadata(props) {
       type: 'article',
       siteName: 'Case Study by New Studio',
       images: {
-        url: projectsDoc?.thumbnail?.data?.mime?.startsWith('image/')
-          ? `${process.env.NEXT_PUBLIC_STRAPI_API_URL + projectsDoc?.thumbnail?.data?.attributes?.url}`
+        url: projectsDoc?.thumbnail?.data?.attributes?.mime?.startsWith(
+          'image/',
+        )
+          ? `${process.env.NEXT_PUBLIC_STRAPI_API_URL + projectsDoc?.thumbnail?.data?.attributes?.url + `?width=1200&height=630&fit=crop`}`
           : undefined,
         width: 1200,
         height: 630,
