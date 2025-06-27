@@ -32,8 +32,9 @@ export function RenderMedia({
       </div>
     )
   } else if (data?.mime?.startsWith('video/')) {
+    return null
     const videoUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL + data?.url
-    
+
     return (
       <VideoPlayer
         src={videoUrl}
