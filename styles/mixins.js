@@ -1,6 +1,6 @@
 import { twMerge } from 'tailwind-merge'
 import Image from 'next/image'
-import VideoPlayer from '../components/video-player'
+import {VideoPlayer} from 'components'
 
 export function RenderMedia({
   fill = false,
