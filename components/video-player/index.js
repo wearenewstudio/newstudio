@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { twMerge } from 'tailwind-merge'
+import { useIntersectionObserver } from 'hooks'
 
 export default function VideoPlayer({
   src,
@@ -29,24 +30,35 @@ export default function VideoPlayer({
   const [hasUserInteracted, setHasUserInteracted] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
 
+  // Use intersection observer to detect when video is in view
+  const { elementRef, isIntersecting, hasIntersected } =
+    useIntersectionObserver({
+      threshold: 0.3, // Start playing when 30% of video is visible
+      rootMargin: '50px', // Start loading 50px before video comes into view
+    })
+
   // Detect mobile devices and browser capabilities
   useEffect(() => {
     const checkDeviceAndBrowser = () => {
       const userAgent = navigator.userAgent || navigator.vendor || window.opera
-      const mobileRegex = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i
+      const mobileRegex =
+        /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i
       const isMobileDevice = mobileRegex.test(userAgent)
-      
+
       // Check for in-app browsers (social media apps)
-      const isInAppBrowser = /FBAN|FBAV|Instagram|Line|WhatsApp|Telegram|Twitter|LinkedIn/i.test(userAgent)
-      
+      const isInAppBrowser =
+        /FBAN|FBAV|Instagram|Line|WhatsApp|Telegram|Twitter|LinkedIn/i.test(
+          userAgent,
+        )
+
       setIsMobile(isMobileDevice || isInAppBrowser)
-      
+
       // Show controls on mobile and in-app browsers for better UX
       if (isMobileDevice || isInAppBrowser) {
         setShowControls(true)
       }
     }
-    
+
     checkDeviceAndBrowser()
   }, [])
 
@@ -57,12 +69,15 @@ export default function VideoPlayer({
     onLoad?.()
   }, [onLoad])
 
-  const handleError = useCallback((e) => {
-    console.error('Video error:', e)
-    setError(true)
-    setIsLoading(false)
-    onError?.(e)
-  }, [onError])
+  const handleError = useCallback(
+    (e) => {
+      console.error('Video error:', e)
+      setError(true)
+      setIsLoading(false)
+      onError?.(e)
+    },
+    [onError],
+  )
 
   const handleCanPlay = useCallback(() => {}, [])
 
@@ -85,7 +100,7 @@ export default function VideoPlayer({
   const handleUserInteraction = useCallback(() => {
     if (!hasUserInteracted && videoRef.current) {
       setHasUserInteracted(true)
-      
+
       // Try to play the video
       videoRef.current.play().catch((err) => {
         console.warn('Autoplay failed:', err)
@@ -94,6 +109,35 @@ export default function VideoPlayer({
       })
     }
   }, [hasUserInteracted])
+
+  // Control video playback based on intersection
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video || !hasIntersected) return
+
+    if (isIntersecting && autoPlay && !isPlaying) {
+      // Video is in view and should autoplay
+      if (isMobile && !hasUserInteracted) {
+        // On mobile, wait for user interaction
+        return
+      }
+
+      video.play().catch((err) => {
+        console.warn('Autoplay failed:', err)
+        setShowControls(true)
+      })
+    } else if (!isIntersecting && isPlaying) {
+      // Video is out of view, pause it
+      video.pause()
+    }
+  }, [
+    isIntersecting,
+    hasIntersected,
+    autoPlay,
+    isPlaying,
+    isMobile,
+    hasUserInteracted,
+  ])
 
   // Set up video event listeners
   useEffect(() => {
@@ -109,7 +153,9 @@ export default function VideoPlayer({
 
     // For mobile devices, set up interaction listeners
     if (isMobile && autoPlay) {
-      document.addEventListener('touchstart', handleUserInteraction, { once: true })
+      document.addEventListener('touchstart', handleUserInteraction, {
+        once: true,
+      })
       document.addEventListener('click', handleUserInteraction, { once: true })
     }
 
@@ -120,27 +166,37 @@ export default function VideoPlayer({
       video.removeEventListener('play', handlePlay)
       video.removeEventListener('pause', handlePause)
       video.removeEventListener('ended', handleEnded)
-      
+
       document.removeEventListener('touchstart', handleUserInteraction)
       document.removeEventListener('click', handleUserInteraction)
     }
-  }, [handleLoadedData, handleError, handleCanPlay, handlePlay, handlePause, handleEnded, handleUserInteraction, isMobile, autoPlay])
+  }, [
+    handleLoadedData,
+    handleError,
+    handleCanPlay,
+    handlePlay,
+    handlePause,
+    handleEnded,
+    handleUserInteraction,
+    isMobile,
+    autoPlay,
+  ])
 
   // Generate multiple source formats for better compatibility
   const generateSources = (videoSrc) => {
     const sources = []
-    
+
     // Add original source
     if (videoSrc) {
       const extension = videoSrc.split('.').pop()?.toLowerCase()
       const baseUrl = videoSrc.replace(/\.[^/.]+$/, '')
-      
+
       // Add original format
       sources.push({
         src: videoSrc,
-        type: `video/${extension === 'mp4' ? 'mp4' : extension === 'webm' ? 'webm' : extension === 'ogg' ? 'ogg' : 'mp4'}`
+        type: `video/${extension === 'mp4' ? 'mp4' : extension === 'webm' ? 'webm' : extension === 'ogg' ? 'ogg' : 'mp4'}`,
       })
-      
+
       // Add alternative formats for better compatibility
       if (extension !== 'webm') {
         sources.push({ src: `${baseUrl}.webm`, type: 'video/webm' })
@@ -152,27 +208,44 @@ export default function VideoPlayer({
         sources.push({ src: `${baseUrl}.ogg`, type: 'video/ogg' })
       }
     }
-    
+
     return sources
   }
 
   // Error fallback
   if (error) {
     return (
-      <div className={twMerge('flex items-center justify-center bg-gray-100 text-gray-500 min-h-[200px]', className)}>
-        <div className="text-center p-4">
+      <div
+        className={twMerge(
+          'flex min-h-[200px] items-center justify-center bg-gray-100 text-gray-500',
+          className,
+        )}
+      >
+        <div className="p-4 text-center">
           <div className="mb-2">
-            <svg className="w-12 h-12 mx-auto text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+            <svg
+              className="mx-auto h-12 w-12 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+              />
             </svg>
           </div>
           <p className="text-sm font-medium">Video not supported</p>
-          <p className="text-xs text-gray-400 mt-1">This video format is not supported by your browser</p>
+          <p className="mt-1 text-xs text-gray-400">
+            This video format is not supported by your browser
+          </p>
           {poster && (
-            <img 
-              src={poster} 
-              alt={alt || 'Video poster'} 
-              className="mt-3 max-w-full h-auto rounded"
+            <img
+              src={poster}
+              alt={alt || 'Video poster'}
+              className="mt-3 h-auto max-w-full rounded"
             />
           )}
         </div>
@@ -183,7 +256,11 @@ export default function VideoPlayer({
   const sources = generateSources(src)
 
   return (
-    <div className={twMerge('relative h-full w-full overflow-hidden', className)} {...props}>
+    <div
+      ref={elementRef}
+      className={twMerge('relative h-full w-full overflow-hidden', className)}
+      {...props}
+    >
       {/* Black background overlay while loading */}
       {isLoading && !error && (
         <div className="absolute inset-0 z-10 bg-black transition-opacity duration-300" />
@@ -192,7 +269,7 @@ export default function VideoPlayer({
         ref={videoRef}
         className="h-full w-full object-cover"
         poster={poster}
-        autoPlay={autoPlay}
+        autoPlay={false} // Disable default autoplay, we control it manually
         muted={muted}
         loop={loop}
         playsInline={playsInline}
@@ -203,39 +280,53 @@ export default function VideoPlayer({
         {sources.map((source, index) => (
           <source key={index} src={source.src} type={source.type} />
         ))}
-        
+
         {/* Fallback text */}
-        <p className="text-sm text-gray-500 p-4">
+        <p className="p-4 text-sm text-gray-500">
           Your browser does not support the video tag.
           {poster && (
-            <img 
-              src={poster} 
-              alt={alt || 'Video poster'} 
-              className="mt-2 max-w-full h-auto"
+            <img
+              src={poster}
+              alt={alt || 'Video poster'}
+              className="mt-2 h-auto max-w-full"
             />
           )}
         </p>
       </video>
-      
-      {/* Mobile autoplay prompt */}
-      {isMobile && autoPlay && !hasUserInteracted && !isPlaying && (
-        <button
-          className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 w-full h-full cursor-pointer focus:outline-none"
-          onClick={handleUserInteraction}
-          onTouchStart={handleUserInteraction}
-          aria-label="Tap to play video"
-          tabIndex={0}
-        >
-          <div className="text-center text-white p-4">
-            <div className="mb-2">
-              <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+
+      {/* Mobile autoplay prompt - only show when video is in view */}
+      {isMobile &&
+        autoPlay &&
+        !hasUserInteracted &&
+        !isPlaying &&
+        isIntersecting && (
+          <button
+            className="absolute inset-0 flex h-full w-full cursor-pointer items-center justify-center bg-black bg-opacity-50 focus:outline-none"
+            onClick={handleUserInteraction}
+            onTouchStart={handleUserInteraction}
+            aria-label="Tap to play video"
+            tabIndex={0}
+          >
+            <div className="p-4 text-center text-white">
+              <div className="mb-2">
+                <svg
+                  className="mx-auto h-12 w-12"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </div>
+              <p className="text-sm font-medium">Tap to play video</p>
             </div>
-            <p className="text-sm font-medium">Tap to play video</p>
-          </div>
-        </button>
-      )}
+          </button>
+        )}
     </div>
   )
-} 
+}
