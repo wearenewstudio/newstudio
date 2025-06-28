@@ -1,76 +1,76 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { twMerge } from 'tailwind-merge'
 
-/**
- * Mobile-safe video:
- * – no src until the element is near the viewport
- * – src is removed + playback paused when it scrolls away
- */
-export default function LazyVideo({
+export default function VideoPlayer({
   src,
   poster,
   alt,
   className,
   autoPlay = false,
-  muted = true,
+  muted = false,
   loop = false,
-  playsInline = true,
+  playsInline = false,
   controls = false,
-  ...rest
+  ...props
 }) {
-  const containerRef = useRef(null)
+  const [isInViewport, setIsInViewport] = useState(false)
   const videoRef = useRef(null)
-  const [isVisible, setIsVisible] = useState(false)
+  const containerRef = useRef(null)
 
   useEffect(() => {
-    const io = new IntersectionObserver(
-      ([entry]) => setIsVisible(entry.isIntersecting),
-      { rootMargin: '200px', threshold: 0.1 },
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInViewport(true)
+        } else {
+          setIsInViewport(false)
+          // Pause video when it leaves viewport
+          if (videoRef.current) {
+            videoRef.current.pause()
+          }
+        }
+      },
+      {
+        rootMargin: '50px', // Start loading 50px before entering viewport
+        threshold: 0.1
+      }
     )
 
-    if (containerRef.current) io.observe(containerRef.current)
-    return () => io.disconnect()
-  }, [])
-
-  // Load or unload the video stream when visibility changes
-  useEffect(() => {
-    const el = videoRef.current
-    if (!el) return
-
-    if (isVisible) {
-      if (!el.src) {
-        el.src = src
-        el.load()
-      }
-      if (autoPlay) el.play().catch(() => {})
-    } else {
-      el.pause()
-      el.removeAttribute('src') // drop the decoder buffer
-      el.load() // force a full detach
+    if (containerRef.current) {
+      observer.observe(containerRef.current)
     }
-  }, [isVisible, src, autoPlay])
+
+    return () => {
+      if (containerRef.current) {
+        observer.unobserve(containerRef.current)
+      }
+      observer.disconnect()
+    }
+  }, [])
 
   return (
     <div
       ref={containerRef}
-      className={twMerge('relative w-full overflow-hidden', className)}
-      {...rest}
+      className={twMerge('relative h-full w-full overflow-hidden', className)}
+      {...props}
     >
       <video
         ref={videoRef}
+        src={isInViewport ? src : undefined}
         poster={poster}
+        autoPlay={autoPlay && isInViewport}
         muted={muted}
         loop={loop}
         playsInline={playsInline}
         controls={controls}
-        preload="none"
         className="h-full w-full object-cover"
+        preload="metadata"
       >
         <track kind="captions" />
-        {alt ? <p>{alt}</p> : null}
+        Your browser does not support the video tag.
       </video>
     </div>
   )
-}
+} 
