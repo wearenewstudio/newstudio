@@ -16,53 +16,37 @@ export default function VideoPlayer({
   ...props
 }) {
   const [isInViewport, setIsInViewport] = useState(false)
-  const [isMobile, setIsMobile] = useState(false)
   const videoRef = useRef(null)
   const containerRef = useRef(null)
 
   useEffect(() => {
-    // Check if device is mobile
-    const checkMobile = () => {
-      const userAgent = navigator.userAgent || navigator.vendor || window.opera
-      const isMobileDevice = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent.toLowerCase())
-      setIsMobile(isMobileDevice)
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInViewport(true)
+          observer.disconnect() // Stop observing once video is loaded
+        }
+      },
+      {
+        rootMargin: '50px', // Start loading 50px before entering viewport
+        threshold: 0.1
+      }
+    )
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current)
     }
 
-    checkMobile()
-
-    // Only set up intersection observer for mobile devices
-    if (isMobile) {
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            setIsInViewport(true)
-            observer.disconnect() // Stop observing once video is loaded
-          }
-        },
-        {
-          rootMargin: '50px', // Start loading 50px before entering viewport
-          threshold: 0.1
-        }
-      )
-
+    return () => {
       if (containerRef.current) {
-        observer.observe(containerRef.current)
+        observer.unobserve(containerRef.current)
       }
-
-      return () => {
-        if (containerRef.current) {
-          observer.unobserve(containerRef.current)
-        }
-        observer.disconnect()
-      }
-    } else {
-      // On desktop, always load the video
-      setIsInViewport(true)
+      observer.disconnect()
     }
-  }, [isMobile])
+  }, [])
 
-  // Show poster image on mobile until video is in viewport
-  if (isMobile && !isInViewport) {
+  // Show poster image until video is in viewport
+  if (!isInViewport) {
     return (
       <div
         ref={containerRef}
@@ -96,7 +80,7 @@ export default function VideoPlayer({
         playsInline={playsInline}
         controls={controls}
         className="h-full w-full object-cover"
-        preload={isMobile ? 'metadata' : 'auto'}
+        preload="metadata"
       >
         <track kind="captions" />
         Your browser does not support the video tag.
