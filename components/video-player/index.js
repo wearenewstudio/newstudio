@@ -29,6 +29,7 @@ export default function VideoPlayer({
   const [showControls, setShowControls] = useState(false)
   const [hasUserInteracted, setHasUserInteracted] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  const [showPlayButton, setShowPlayButton] = useState(false)
 
   // Use intersection observer to detect when video is in view
   const { elementRef, isIntersecting, hasIntersected } =
@@ -56,6 +57,7 @@ export default function VideoPlayer({
       // Show controls on mobile and in-app browsers for better UX
       if (isMobileDevice || isInAppBrowser) {
         setShowControls(true)
+        setShowPlayButton(true)
       }
     }
 
@@ -83,32 +85,55 @@ export default function VideoPlayer({
 
   const handlePlay = useCallback(() => {
     setIsPlaying(true)
+    setShowPlayButton(false)
     onPlay?.()
   }, [onPlay])
 
   const handlePause = useCallback(() => {
     setIsPlaying(false)
+    if (isMobile && autoPlay) {
+      setShowPlayButton(true)
+    }
     onPause?.()
-  }, [onPause])
+  }, [onPause, isMobile, autoPlay])
 
   const handleEnded = useCallback(() => {
     setIsPlaying(false)
+    if (isMobile && autoPlay) {
+      setShowPlayButton(true)
+    }
     onEnded?.()
-  }, [onEnded])
+  }, [onEnded, isMobile, autoPlay])
 
-  // Handle user interaction for mobile autoplay
+  // Enhanced user interaction handler for mobile autoplay
   const handleUserInteraction = useCallback(() => {
     if (!hasUserInteracted && videoRef.current) {
       setHasUserInteracted(true)
-
+      setShowPlayButton(false)
+      
       // Try to play the video
       videoRef.current.play().catch((err) => {
         console.warn('Autoplay failed:', err)
         // If autoplay fails, ensure controls are shown
         setShowControls(true)
+        setShowPlayButton(true)
       })
     }
   }, [hasUserInteracted])
+
+  // Force play function for mobile
+  const forcePlay = useCallback(() => {
+    if (videoRef.current) {
+      setHasUserInteracted(true)
+      setShowPlayButton(false)
+      
+      videoRef.current.play().catch((err) => {
+        console.warn('Force play failed:', err)
+        setShowControls(true)
+        setShowPlayButton(true)
+      })
+    }
+  }, [])
 
   // Control video playback based on intersection
   useEffect(() => {
@@ -118,13 +143,15 @@ export default function VideoPlayer({
     if (isIntersecting && autoPlay && !isPlaying) {
       // Video is in view and should autoplay
       if (isMobile && !hasUserInteracted) {
-        // On mobile, wait for user interaction
+        // On mobile, show play button instead of auto-playing
+        setShowPlayButton(true)
         return
       }
-
+      
       video.play().catch((err) => {
         console.warn('Autoplay failed:', err)
         setShowControls(true)
+        setShowPlayButton(true)
       })
     } else if (!isIntersecting && isPlaying) {
       // Video is out of view, pause it
@@ -151,12 +178,24 @@ export default function VideoPlayer({
     video.addEventListener('pause', handlePause)
     video.addEventListener('ended', handleEnded)
 
-    // For mobile devices, set up interaction listeners
+    // For mobile devices, set up more aggressive interaction listeners
     if (isMobile && autoPlay) {
-      document.addEventListener('touchstart', handleUserInteraction, {
-        once: true,
-      })
-      document.addEventListener('click', handleUserInteraction, { once: true })
+      // Listen for any touch or click on the document
+      const handleGlobalInteraction = () => {
+        if (!hasUserInteracted) {
+          handleUserInteraction()
+        }
+      }
+      
+      document.addEventListener('touchstart', handleGlobalInteraction, { once: true })
+      document.addEventListener('click', handleGlobalInteraction, { once: true })
+      document.addEventListener('scroll', handleGlobalInteraction, { once: true })
+      
+      return () => {
+        document.removeEventListener('touchstart', handleGlobalInteraction)
+        document.removeEventListener('click', handleGlobalInteraction)
+        document.removeEventListener('scroll', handleGlobalInteraction)
+      }
     }
 
     return () => {
@@ -166,9 +205,6 @@ export default function VideoPlayer({
       video.removeEventListener('play', handlePlay)
       video.removeEventListener('pause', handlePause)
       video.removeEventListener('ended', handleEnded)
-
-      document.removeEventListener('touchstart', handleUserInteraction)
-      document.removeEventListener('click', handleUserInteraction)
     }
   }, [
     handleLoadedData,
@@ -180,6 +216,7 @@ export default function VideoPlayer({
     handleUserInteraction,
     isMobile,
     autoPlay,
+    hasUserInteracted,
   ])
 
   // Generate multiple source formats for better compatibility
@@ -261,9 +298,13 @@ export default function VideoPlayer({
       className={twMerge('relative h-full w-full overflow-hidden', className)}
       {...props}
     >
-      {/* Black background overlay while loading */}
+      {/* Loading spinner instead of black background */}
       {isLoading && !error && (
-        <div className="absolute inset-0 z-10 bg-black transition-opacity duration-300" />
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-gray-900 bg-opacity-50">
+          <div className="relative">
+            <div className="w-12 h-12 border-4 border-gray-300 border-t-white rounded-lg animate-spin"></div>
+          </div>
+        </div>
       )}
       <video
         ref={videoRef}
@@ -294,36 +335,62 @@ export default function VideoPlayer({
         </p>
       </video>
 
-      {/* Mobile autoplay prompt - only show when video is in view */}
+      {/* Enhanced mobile play button - more prominent and always visible when needed */}
       {isMobile &&
         autoPlay &&
         !hasUserInteracted &&
         !isPlaying &&
-        isIntersecting && (
+        isIntersecting &&
+        showPlayButton && (
           <button
-            className="absolute inset-0 flex h-full w-full cursor-pointer items-center justify-center bg-black bg-opacity-50 focus:outline-none"
-            onClick={handleUserInteraction}
-            onTouchStart={handleUserInteraction}
+            className="absolute inset-0 flex h-full w-full cursor-pointer items-center justify-center bg-black bg-opacity-60 focus:outline-none"
+            onClick={forcePlay}
+            onTouchStart={forcePlay}
             aria-label="Tap to play video"
+            tabIndex={0}
+          >
+            <div className="p-4 text-center text-white">
+              <div className="mb-3">
+                <svg
+                  className="mx-auto h-16 w-16 text-white"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </div>
+              <p className="text-base font-semibold">Tap to play video</p>
+              <p className="mt-1 text-sm text-gray-300">
+                Video will autoplay after interaction
+              </p>
+            </div>
+          </button>
+        )}
+
+      {/* Fallback play button for when video is paused on mobile */}
+      {isMobile &&
+        autoPlay &&
+        hasUserInteracted &&
+        !isPlaying &&
+        showPlayButton && (
+          <button
+            className="absolute inset-0 flex h-full w-full cursor-pointer items-center justify-center bg-black bg-opacity-40 focus:outline-none"
+            onClick={forcePlay}
+            onTouchStart={forcePlay}
+            aria-label="Tap to resume video"
             tabIndex={0}
           >
             <div className="p-4 text-center text-white">
               <div className="mb-2">
                 <svg
-                  className="mx-auto h-12 w-12"
-                  fill="none"
-                  stroke="currentColor"
+                  className="mx-auto h-12 w-12 text-white"
+                  fill="currentColor"
                   viewBox="0 0 24 24"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
+                  <path d="M8 5v14l11-7z" />
                 </svg>
               </div>
-              <p className="text-sm font-medium">Tap to play video</p>
+              <p className="text-sm font-medium">Tap to resume</p>
             </div>
           </button>
         )}
