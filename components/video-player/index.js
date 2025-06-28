@@ -110,7 +110,7 @@ export default function VideoPlayer({
     if (!hasUserInteracted && videoRef.current) {
       setHasUserInteracted(true)
       setShowPlayButton(false)
-      
+
       // Try to play the video
       videoRef.current.play().catch((err) => {
         console.warn('Autoplay failed:', err)
@@ -126,7 +126,7 @@ export default function VideoPlayer({
     if (videoRef.current) {
       setHasUserInteracted(true)
       setShowPlayButton(false)
-      
+
       videoRef.current.play().catch((err) => {
         console.warn('Force play failed:', err)
         setShowControls(true)
@@ -147,7 +147,7 @@ export default function VideoPlayer({
         setShowPlayButton(true)
         return
       }
-      
+
       video.play().catch((err) => {
         console.warn('Autoplay failed:', err)
         setShowControls(true)
@@ -186,11 +186,17 @@ export default function VideoPlayer({
           handleUserInteraction()
         }
       }
-      
-      document.addEventListener('touchstart', handleGlobalInteraction, { once: true })
-      document.addEventListener('click', handleGlobalInteraction, { once: true })
-      document.addEventListener('scroll', handleGlobalInteraction, { once: true })
-      
+
+      document.addEventListener('touchstart', handleGlobalInteraction, {
+        once: true,
+      })
+      document.addEventListener('click', handleGlobalInteraction, {
+        once: true,
+      })
+      document.addEventListener('scroll', handleGlobalInteraction, {
+        once: true,
+      })
+
       return () => {
         document.removeEventListener('touchstart', handleGlobalInteraction)
         document.removeEventListener('click', handleGlobalInteraction)
@@ -300,9 +306,9 @@ export default function VideoPlayer({
     >
       {/* Loading spinner instead of black background */}
       {isLoading && !error && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center bg-gray-900 bg-opacity-50">
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-neutral-200 bg-opacity-50 dark:bg-neutral-900">
           <div className="relative">
-            <div className="w-12 h-12 border-4 border-gray-300 border-t-white rounded-lg animate-spin"></div>
+            <div className="h-12 w-12 animate-spin rounded-lg border-4 border-neutral-800 dark:border-neutral-200" />
           </div>
         </div>
       )}
