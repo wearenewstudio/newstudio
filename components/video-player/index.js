@@ -1,90 +1,76 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 
-export default function VideoPlayer({
+/**
+ * Mobile-safe video:
+ * – no src until the element is near the viewport
+ * – src is removed + playback paused when it scrolls away
+ */
+export default function LazyVideo({
   src,
   poster,
   alt,
   className,
   autoPlay = false,
-  muted = false,
+  muted = true,
   loop = false,
-  playsInline = false,
+  playsInline = true,
   controls = false,
-  ...props
+  ...rest
 }) {
-  const [isInViewport, setIsInViewport] = useState(false)
-  const videoRef = useRef(null)
   const containerRef = useRef(null)
+  const videoRef = useRef(null)
+  const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsInViewport(true)
-          observer.disconnect() // Stop observing once video is loaded
-        }
-      },
-      {
-        rootMargin: '50px', // Start loading 50px before entering viewport
-        threshold: 0.1
-      }
+    const io = new IntersectionObserver(
+      ([entry]) => setIsVisible(entry.isIntersecting),
+      { rootMargin: '200px', threshold: 0.1 },
     )
 
-    if (containerRef.current) {
-      observer.observe(containerRef.current)
-    }
-
-    return () => {
-      if (containerRef.current) {
-        observer.unobserve(containerRef.current)
-      }
-      observer.disconnect()
-    }
+    if (containerRef.current) io.observe(containerRef.current)
+    return () => io.disconnect()
   }, [])
 
-  // Show poster image until video is in viewport
-  if (!isInViewport) {
-    return (
-      <div
-        ref={containerRef}
-        className={twMerge('relative h-full w-full overflow-hidden', className)}
-        {...props}
-      >
-        {poster && (
-          <img
-            src={poster}
-            alt={alt}
-            className="h-full w-full object-cover"
-          />
-        )}
-      </div>
-    )
-  }
+  // Load or unload the video stream when visibility changes
+  useEffect(() => {
+    const el = videoRef.current
+    if (!el) return
+
+    if (isVisible) {
+      if (!el.src) {
+        el.src = src
+        el.load()
+      }
+      if (autoPlay) el.play().catch(() => {})
+    } else {
+      el.pause()
+      el.removeAttribute('src') // drop the decoder buffer
+      el.load() // force a full detach
+    }
+  }, [isVisible, src, autoPlay])
 
   return (
     <div
       ref={containerRef}
-      className={twMerge('relative h-full w-full overflow-hidden', className)}
-      {...props}
+      className={twMerge('relative w-full overflow-hidden', className)}
+      {...rest}
     >
       <video
         ref={videoRef}
-        src={src}
         poster={poster}
-        autoPlay={autoPlay}
         muted={muted}
         loop={loop}
         playsInline={playsInline}
         controls={controls}
+        preload="none"
         className="h-full w-full object-cover"
-        preload="metadata"
       >
         <track kind="captions" />
-        Your browser does not support the video tag.
+        {alt ? <p>{alt}</p> : null}
       </video>
     </div>
   )
-} 
+}
